@@ -1,0 +1,2 @@
+.nav-item:hover .dropdown-content {display: block;}
+.nav-item a:hover,.dropdown-content a:hover {background-color: red;}
