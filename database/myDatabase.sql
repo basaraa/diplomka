@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hostiteľ: db
--- Čas generovania: So 04.Feb 2023, 09:14
+-- Čas generovania: So 18.Feb 2023, 09:00
 -- Verzia serveru: 8.0.32
 -- Verzia PHP: 8.0.19
 
@@ -40,9 +40,21 @@ CREATE TABLE `fieldsOfStudy` (
 
 CREATE TABLE `Rooms` (
   `id` int UNSIGNED NOT NULL,
-  `type` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
+  `name` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `room_type` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- --------------------------------------------------------
+
+--
+-- Štruktúra tabuľky pre tabuľku `SubjectFieldOfStudies`
+--
+
+CREATE TABLE `SubjectFieldOfStudies` (
+  `id` int UNSIGNED NOT NULL,
+  `subject_id` int UNSIGNED NOT NULL,
+  `fieldOfStudy_id` int UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -52,16 +64,31 @@ CREATE TABLE `Rooms` (
 
 CREATE TABLE `Subjects` (
   `id` int UNSIGNED NOT NULL,
-  `teacher_id` int UNSIGNED DEFAULT NULL,
   `room_id` int UNSIGNED DEFAULT NULL,
-  `fieldOfStudy_id` int UNSIGNED NOT NULL,
-  `grade` enum('bc.','ing.') NOT NULL,
+  `name` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `shortcut` varchar(8) NOT NULL,
+  `grade` enum('bc.','ing.','phd.') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `year` enum('1','2','3') NOT NULL,
+  `semestre` enum('ZS','LS') NOT NULL,
   `lecture_day` varchar(9) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `lecture_time` time DEFAULT NULL,
+  `lecture_time_from` time DEFAULT NULL,
+  `lecture_time_to` time DEFAULT NULL,
   `exercise_day` varchar(9) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `exercise_time` time DEFAULT NULL
+  `exercise_time_from` time DEFAULT NULL,
+  `exercise_time_to` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- --------------------------------------------------------
+
+--
+-- Štruktúra tabuľky pre tabuľku `SubjectTeachers`
+--
+
+CREATE TABLE `SubjectTeachers` (
+  `id` int UNSIGNED NOT NULL,
+  `subject_id` int UNSIGNED NOT NULL,
+  `teacher_id` int UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf32;
 
 -- --------------------------------------------------------
 
@@ -91,12 +118,26 @@ ALTER TABLE `Rooms`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexy pre tabuľku `SubjectFieldOfStudies`
+--
+ALTER TABLE `SubjectFieldOfStudies`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `subject_id` (`subject_id`),
+  ADD KEY `fieldOfStudy_id` (`fieldOfStudy_id`);
+
+--
 -- Indexy pre tabuľku `Subjects`
 --
 ALTER TABLE `Subjects`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fieldOfStudy_id` (`fieldOfStudy_id`),
-  ADD KEY `room_id` (`room_id`),
+  ADD KEY `room_id` (`room_id`);
+
+--
+-- Indexy pre tabuľku `SubjectTeachers`
+--
+ALTER TABLE `SubjectTeachers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `subject_id` (`subject_id`),
   ADD KEY `teacher_id` (`teacher_id`);
 
 --
@@ -122,9 +163,21 @@ ALTER TABLE `Rooms`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT pre tabuľku `SubjectFieldOfStudies`
+--
+ALTER TABLE `SubjectFieldOfStudies`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT pre tabuľku `Subjects`
 --
 ALTER TABLE `Subjects`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pre tabuľku `SubjectTeachers`
+--
+ALTER TABLE `SubjectTeachers`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -138,12 +191,24 @@ ALTER TABLE `Teachers`
 --
 
 --
+-- Obmedzenie pre tabuľku `SubjectFieldOfStudies`
+--
+ALTER TABLE `SubjectFieldOfStudies`
+  ADD CONSTRAINT `SubjectFieldOfStudies_ibfk_1` FOREIGN KEY (`subject_id`) REFERENCES `Subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `SubjectFieldOfStudies_ibfk_2` FOREIGN KEY (`fieldOfStudy_id`) REFERENCES `fieldsOfStudy` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Obmedzenie pre tabuľku `Subjects`
 --
 ALTER TABLE `Subjects`
-  ADD CONSTRAINT `Subjects_ibfk_1` FOREIGN KEY (`fieldOfStudy_id`) REFERENCES `fieldsOfStudy` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `Subjects_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `Rooms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `Subjects_ibfk_3` FOREIGN KEY (`teacher_id`) REFERENCES `Teachers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `Subjects_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `Rooms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Obmedzenie pre tabuľku `SubjectTeachers`
+--
+ALTER TABLE `SubjectTeachers`
+  ADD CONSTRAINT `SubjectTeachers_ibfk_1` FOREIGN KEY (`subject_id`) REFERENCES `Subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `SubjectTeachers_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `Teachers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

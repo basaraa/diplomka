@@ -41,4 +41,50 @@ header{
 select,input{
     margin-bottom: 15px;
 }
+#modal_background{
+    position: fixed;
+    display: none;
+    width:100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background: rgba(0,0,0,0.6);
+    z-index:5;
+}
+.modal_div{
+    position: fixed;
+    display: none;
+    width:100%;
+    height: 100%;
+    top:0;
+    left:0;
+    align-items: center;
+    justify-content: center;
+    z-index: 6;
+}
+#modal_vrstva{
+    position: fixed;
+    background-color: lightblue;
+    padding: 20px;
+    text-align: center;
+}
+input[type=checkbox]{
+    margin: 5px;
+}
+.checkboxPlace{
+    display: flex;
+    position: center;
+    align-items: center;
+    justify-content: center;
+}
+.checkboxPlaceContainer{
+    flex-direction: row;
+    position: center;
+    align-items: center;
+    justify-content: center;
+}
+.btn{
+    margin-top: 10px;
+}
+
 

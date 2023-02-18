@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="partials/style.css">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <title>Diplomová práca</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 </head>
 <body>
 <header>
@@ -23,19 +24,19 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">Pridať</a>
                             <div class="dropdown-content">
-                                <a class="nav-link" href="addSubject.php">Predmet</a>
-                                <a class="nav-link" href="addTeacher.php">Učiteľa</a>
-                                <a class="nav-link" href="addRoom.php">Miestnosť</a>
-                                <a class="nav-link" href="addFieldOfStudy.php">Odbor</a>
+                                <a class="nav-link" href="addForm.php?type=3">Predmet</a>
+                                <a class="nav-link" href="addForm.php?type=1">Učiteľa</a>
+                                <a class="nav-link" href="addForm.php?type=2">Miestnosť</a>
+                                <a class="nav-link" href="addForm.php?type=0">Odbor</a>
                             </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Vymazať</a>
                             <div class="dropdown-content">
-                                <a class="nav-link" href="delete.php?type=3">Predmet</a>
-                                <a class="nav-link" href="delete.php?type=1">Učiteľa</a>
-                                <a class="nav-link" href="delete.php?type=2">Miestnosť</a>
-                                <a class="nav-link" href="delete.php?type=0">Odbor</a>
+                                <a class="nav-link" href="deleteForm.php?type=3">Predmet</a>
+                                <a class="nav-link" href="deleteForm.php?type=1">Učiteľa</a>
+                                <a class="nav-link" href="deleteForm.php?type=2">Miestnosť</a>
+                                <a class="nav-link" href="deleteForm.php?type=0">Odbor</a>
                             </div>
                         </li>
                         <li class="nav-item">
@@ -43,6 +44,7 @@
                             <div class="dropdown-content">
                                 <a class="nav-link" href="semestreSchedule.php">Semestra</a>
                                 <a class="nav-link" href="teacherSchedule.php">Učiteľa</a>
+                                <a class="nav-link" href="roomSchedule.php">Miestnosti</a>
                             </div>
                         </li>
                     </ul>
