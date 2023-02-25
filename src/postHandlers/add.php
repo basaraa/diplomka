@@ -1,6 +1,6 @@
 <?php
-require_once("config/config.php");
-include "databaseQueries/databaseQueries.php";
+require_once("../config/config.php");
+include "../databaseQueries/databaseQueries.php";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     if (isset($_POST["type"])){
         if ($_POST["type"]==0){

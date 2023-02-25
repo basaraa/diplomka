@@ -24,7 +24,7 @@ if ($selected){
                 echo "<li> <a class='dropdown-item' href='#'> $j . ročník </a>
                       <ul class='dropdown-menu dropdown-submenu'>";
                 for ($k=0;$k<2;$k++){
-                    echo  "<li> <a class='dropdown-item' href='subjects.php?study=$id&year=$j&semestre=$semestre[$k]'>$semestre[$k]</a></li>";
+                    echo  "<li> <a class='dropdown-item' href='subjects.php?study=$id&grade=$fields[$i].&year=$j&semestre=$semestre[$k]'>$semestre[$k]</a></li>";
                 }
                 echo "</ul></li>";
             }
