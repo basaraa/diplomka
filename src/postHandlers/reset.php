@@ -5,10 +5,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if (isset ($_POST["id"]) && isset ($_POST["type"]) ){
         $id=$_POST["id"];
         $type=$_POST["type"];
-        $result = delete($conn,$id,$type);
+        $result = resetSubjects($conn,$id,$type);
         if($result)
         {
-            echo 1;
+            echo $id;
         }
         else {
             http_response_code(400);

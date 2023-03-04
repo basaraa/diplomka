@@ -19,7 +19,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $subjectTeachers=[];
             if ($selectedSubjectTeachers)
                 while ($teacher=mysqli_fetch_assoc($selectedSubjectTeachers))
-                    $subjectTeachers[]=$teacher['id'];
+                    array_push($subjectTeachers,$teacher["id"]);
             $roomId=$subject["room_id"];
             $allRooms=selectAllRooms($conn);
             echo '<h1>'.$name.'</h1>
@@ -46,7 +46,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     $id= $item["id"];
                     $name = $item["name"];
                     if (in_array($id,$subjectTeachers))
-                        echo '<label for="'.$id.'"><input type="checkbox" name="subjectTeachers[]" value="'.$id.'" id="'.$id.'" checked>'.$name.'</input></label>';
+                        echo '<label for="'.$id.'"><input type="checkbox" name="subjectTeachers[]" value="'.$id.'" id="'.$id.'" Checked>'.$name.'</input></label>';
                     else
                         echo '<label for="'.$id.'"><input type="checkbox" name="subjectTeachers[]" value="'.$id.'" id="'.$id.'">'.$name.'</input></label>';
                 }

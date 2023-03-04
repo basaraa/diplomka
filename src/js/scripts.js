@@ -1,3 +1,4 @@
+//add
 $(function () {
     $('.addForm').submit( function (e) {
         e.preventDefault();
@@ -16,6 +17,7 @@ $(function () {
     })
 });
 
+//delete
 $(function () {
     $('.deleteForm').on('submit', function (e) {
         e.preventDefault();
@@ -34,6 +36,7 @@ $(function () {
     })
 });
 
+//edit subject
 $(function () {
     $('.editForm').on('submit', function (e) {
         e.preventDefault();
@@ -42,11 +45,16 @@ $(function () {
             url: 'postHandlers/edit.php',
             data: $('.editForm').serialize(),
             success: function (data) {
-                document.getElementById("modal_background").style.display="none";
-                document.getElementsByClassName("modal_div")[0].style.display="none";
-                document.getElementById("modal_background2").style.display="block";
-                document.getElementsByClassName("modal_div2")[0].style.display="flex";
-                document.getElementById("result_edit").innerHTML=data;
+                let result = JSON.parse(data)
+                if(result.scs===false)
+                    alert(result.msg)
+                else{
+                    document.getElementById("modal_background").style.display="none";
+                    document.getElementsByClassName("modal_div")[0].style.display="none";
+                    document.getElementById("modal_background2").style.display="block";
+                    document.getElementsByClassName("modal_div2")[0].style.display="flex";
+                    document.getElementById("result_edit").innerHTML=result.msg;
+                }
             },
             error: function (){
                 alert ("Nastala chyba skúste to znova")
@@ -55,6 +63,7 @@ $(function () {
     })
 });
 
+//generate edit subject form
 $(function () {
     $('.edit_subject').on('click', function (e) {
         let id=this.id;
@@ -75,6 +84,7 @@ $(function () {
     })
 });
 
+//generate options by grade
 $(function () {
   $(".subjectFieldOfStudy").change(function(){
       let index = $(".subjectFieldOfStudy option:selected").index();
@@ -91,3 +101,40 @@ function go_back(){
     document.getElementsByClassName("modal_div")[0].style.display="none";
 }
 
+//reset single subject
+$(function () {
+    $('.reset_single_subject').on('click', function (e) {
+        let id=this.id;
+        e.preventDefault();
+        $.ajax({
+            type: 'post',
+            url: 'postHandlers/reset.php',
+            data: {id : id,type:0},
+            success: function () {
+                location.reload()
+            },
+            error: function (){
+                alert ("Nastala chyba skúste to znova")
+            }
+        });
+    })
+});
+//reset all subjects in fieldOfStudy
+$(function () {
+    $('.reset_fieldOfStudy_subject').on('click', function (e) {
+        let id=this.id;
+        e.preventDefault();
+        $.ajax({
+            type: 'post',
+            url: 'postHandlers/reset.php',
+            data: {id : id,type:1},
+            success: function (data) {
+                console.log(data)
+                location.reload()
+            },
+            error: function (){
+                alert ("Nastala chyba skúste to znova")
+            }
+        });
+    })
+});

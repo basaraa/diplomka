@@ -82,9 +82,12 @@ if (isset($_GET["study"]) && isset($_GET["grade"]) && isset($_GET["year"]) && is
             echo '</p>';
             echo'
                  <button class="btn btn-primary edit_subject" id="'.$subject["id"].'">Upraviť predmet</button>
+                 ';
+            echo'
+                 <button class="btn btn-primary reset_single_subject" id="'.$subject["id"].'">Resetovať predmet</button>
                  </div>';
         }
-        echo "</div>";
+        echo '</div><button class="btn btn-primary reset_fieldOfStudy_subject" id="'.$study.'"">Resetovať všetky predmety</button>';
     }
 
 }
