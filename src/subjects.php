@@ -80,14 +80,19 @@ if (isset($_GET["study"]) && isset($_GET["grade"]) && isset($_GET["year"]) && is
             else
                 echo 'nezadaný čas';
             echo '</p>';
+            $sId=$subject["id"];
+
+            $functionEditForm="'$sId','$grade','$year','$semestre'";
             echo'
-                 <button class="btn btn-primary edit_subject" id="'.$subject["id"].'">Upraviť predmet</button>
+                 <button class="btn btn-primary" onclick="generateEditForm('.$functionEditForm.')">Upraviť predmet</button>
                  ';
+
             echo'
-                 <button class="btn btn-primary reset_single_subject" id="'.$subject["id"].'">Resetovať predmet</button>
+                 <button class="btn btn-primary" onclick="resetSingleSubject('.$sId.')">Resetovať predmet</button>
                  </div>';
         }
-        echo '</div><button class="btn btn-primary reset_fieldOfStudy_subject" id="'.$study.'"">Resetovať všetky predmety</button>';
+        if (isset($sId))
+            echo '</div><button class="btn btn-primary reset_fieldOfStudy_subject" onclick="resetFieldOfStudySubjects('.$sId.')">Resetovať všetky predmety</button>';
     }
 
 }
@@ -106,7 +111,7 @@ else http_response_code(400);
     <div id="modal_background2"></div>
     <div class="modal_div2">
         <div id="modal_vrstva2">
-            <div id="result_edit"></div>
+            <h1 id="result_edit"></h1>
             <button class="btn btn-primary" onclick="window.location.href='subjects.php?study=<?=$study?>&grade=<?=$grade?>&year=<?=$year?>&semestre=<?=$semestre?>'">Vrátiť sa späť</button>
         </div>
     </div>

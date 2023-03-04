@@ -8,7 +8,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $result = resetSubjects($conn,$id,$type);
         if($result)
         {
-            echo $id;
+            echo 1;
         }
         else {
             http_response_code(400);

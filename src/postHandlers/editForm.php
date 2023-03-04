@@ -2,8 +2,12 @@
 require_once("../config/config.php");
 include "../databaseQueries/databaseQueries.php";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    if (isset($_POST["subjectId"])){
+    if (isset($_POST["subjectId"]) && isset ($_POST["grade"])
+        && isset ($_POST["year"]) && isset ($_POST["semestre"])){
         $subjectId=$_POST["subjectId"];
+        $grade =$_POST["grade"];
+        $year = $_POST["year"];
+        $semestre = $_POST["semestre"];
         $selected=selectSubjectById($conn,$subjectId);
         if ($selected){
             $days=["pondelok","utorok","streda","štvrtok","piatok"];
@@ -25,6 +29,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             echo '<h1>'.$name.'</h1>
                                     
                     <input type="hidden" id="subjectId" name="subjectId" value = "'.$subjectId.'">
+                    <input type="hidden" id="grade" name="grade" value = "'.$grade.'">
+                    <input type="hidden" id="year" name="year" value = "'.$year.'">
+                    <input type="hidden" id="semestre" name="semestre" value = "'.$semestre.'">
                     <div class="form-group">
                     <label for="room_id">Miestnosť:</label>
                     <select class="form-control" name= "room_id" id="room_id" required>';

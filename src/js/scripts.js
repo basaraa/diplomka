@@ -64,14 +64,11 @@ $(function () {
 });
 
 //generate edit subject form
-$(function () {
-    $('.edit_subject').on('click', function (e) {
-        let id=this.id;
-        e.preventDefault();
+function generateEditForm(id,grade,year,semestre){
         $.ajax({
             type: 'post',
             url: 'postHandlers/editForm.php',
-            data: {subjectId : id},
+            data: {subjectId : id,grade:grade,year:year, semestre : semestre},
             success: function (data) {
                 document.getElementById("modal_background").style.display="block";
                 document.getElementsByClassName("modal_div")[0].style.display="flex";
@@ -81,8 +78,7 @@ $(function () {
                 alert ("Nastala chyba skúste to znova")
             }
         });
-    })
-});
+    }
 
 //generate options by grade
 $(function () {
@@ -102,39 +98,30 @@ function go_back(){
 }
 
 //reset single subject
-$(function () {
-    $('.reset_single_subject').on('click', function (e) {
-        let id=this.id;
-        e.preventDefault();
-        $.ajax({
-            type: 'post',
-            url: 'postHandlers/reset.php',
-            data: {id : id,type:0},
-            success: function () {
-                location.reload()
-            },
-            error: function (){
-                alert ("Nastala chyba skúste to znova")
-            }
-        });
-    })
-});
+function resetSingleSubject(id){
+    $.ajax({
+        type: 'post',
+        url: 'postHandlers/reset.php',
+        data: {id : id,type:0},
+        success: function () {
+            location.reload()
+        },
+        error: function (){
+            alert ("Nastala chyba skúste to znova")
+        }
+    });
+}
 //reset all subjects in fieldOfStudy
-$(function () {
-    $('.reset_fieldOfStudy_subject').on('click', function (e) {
-        let id=this.id;
-        e.preventDefault();
-        $.ajax({
-            type: 'post',
-            url: 'postHandlers/reset.php',
-            data: {id : id,type:1},
-            success: function (data) {
-                console.log(data)
-                location.reload()
-            },
-            error: function (){
-                alert ("Nastala chyba skúste to znova")
-            }
-        });
-    })
-});
+function resetFieldOfStudySubjects(id){
+    $.ajax({
+        type: 'post',
+        url: 'postHandlers/reset.php',
+        data: {id : id,type:1},
+        success: function () {
+            location.reload()
+        },
+        error: function (){
+            alert ("Nastala chyba skúste to znova")
+        }
+    });
+}
