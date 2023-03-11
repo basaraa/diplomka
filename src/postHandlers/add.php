@@ -62,6 +62,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
             else http_response_code(400);
         }
+        else if ($_POST["type"]==4){
+            if (isset($_POST["id"]) && isset($_POST["Day"]) && isset($_POST["From"]) && isset($_POST["To"])){
+                $teacherId= $_POST["id"];
+                $day=$_POST["Day"];
+                $from=$_POST["From"];
+                $to=$_POST["To"];
+                $result = insertTeacherConstraints($conn,$teacherId,$day,$from,$to);
+                if($result)
+                {
+                    echo 1;
+                }
+                else http_response_code(400);
+            }
+            else http_response_code(400);
+
+        }
     }
     else
         http_response_code(400);

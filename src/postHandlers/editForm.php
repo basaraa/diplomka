@@ -72,13 +72,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
             echo '</select><label for="lectureFrom">Čas prednášky:</label><br> <label class="control-label">od ';
             if ($lectureFrom)
-                echo '<input type="time" class="form-inline" name= "lectureFrom" id="lectureFrom" value = "'.$lectureFrom.'" required>';
+                echo '<input type="time" class="form-inline" name= "lectureFrom" id="lectureFrom" value = "'.date('h:i', strtotime($lectureFrom)).'" min="00:00" max="23:59" required>';
             else
-                echo '<input type="time" class="form-inline" name= "lectureFrom" id="lectureFrom" required>';
+                echo '<input type="time" class="form-inline" name= "lectureFrom" id="lectureFrom" min="00:00" max="23:59" required>';
             if ($lectureTo)
-                echo ' do <input type="time" class="form-inline" name= "lectureTo" id="lectureTo" value = "'.$lectureTo.'" required>';
+                echo ' do <input type="time" class="form-inline" name= "lectureTo" id="lectureTo" value = "'.date('h:i', strtotime($lectureTo)).'" min="00:00" max="23:59" required>';
             else
-                echo ' do <input type="time" class="form-inline" name= "lectureTo" id="lectureTo" required>';
+                echo ' do <input type="time" class="form-inline" name= "lectureTo" id="lectureTo" min="00:00" max="23:59" required>';
             echo '</label>';
 
             //cvičenie
@@ -94,13 +94,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             echo '</select><label for="exerciseFrom">Čas prednášky:</label><br> <label class="control-label">od ';
             if ($exerciseFrom)
-                echo '<input type="time" class="form-inline" name= "exerciseFrom" id="exerciseFrom" value = "'.$exerciseFrom.'" required>';
+                echo '<input type="time" class="form-inline" name= "exerciseFrom" id="exerciseFrom" value = "'.date('h:i', strtotime($exerciseFrom)).'" min="00:00" max="23:59" required>';
             else
-                echo '<input type="time" class="form-inline" name= "exerciseFrom" id="exerciseFrom" required>';
+                echo '<input type="time" class="form-inline" name= "exerciseFrom" id="exerciseFrom" min="00:00" max="23:59" required>';
             if ($exerciseTo)
-                echo ' do <input type="time" class="form-inline" name= "exerciseTo" id="exerciseTo" value = "'.$exerciseTo.'" required>';
+                echo ' do <input type="time" class="form-inline" name= "exerciseTo" id="exerciseTo" value = "'.date('h:i', strtotime($exerciseTo)).'" min="00:00" max="23:59" required>';
             else
-                echo ' do <input type="time" class="form-inline" name= "exerciseTo" id="exerciseTo" required>';
+                echo ' do <input type="time" class="form-inline" name= "exerciseTo" id="exerciseTo" min="00:00" max="23:59" required>';
             echo '</label>';
             echo '</div>
             <button type="submit" class="btn btn-primary">Upraviť predmet</button>

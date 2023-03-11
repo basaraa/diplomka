@@ -3,6 +3,7 @@ include "partials/header.php";
 require_once("config/config.php");
 include "databaseQueries/databaseQueries.php";
     if ((isset($_GET["type"]))) {
+        $days=["pondelok","utorok","streda","štvrtok","piatok"];
         if ($_GET["type"]==0)
             echo '<form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "0">
@@ -71,6 +72,32 @@ include "databaseQueries/databaseQueries.php";
             echo '</div></div>
                         <button type="submit" class="btn btn-primary">Vložiť predmet</button>
                     </form>';
+        }
+        else if ($_GET["type"]==4){
+            echo '<form class="form addForm">                   
+                    <input type="hidden" id="type" name="type" value = "4">
+                    <div class="form-group"> <label for="id">Meno učiteľa:</label>
+                    <select class="form-control" name= "id" id="id" required>
+                        ';
+            $selected=selectAllTeachers($conn);
+            if ($selected){
+                while ($item=mysqli_fetch_assoc($selected)){
+                    $id= $item["id"];
+                    $name = $item["name"];
+                    echo "<option value= '$id'>$name</option>";
+                }
+            }
+             echo '</select><label for="Day">Deň:</label><select class="form-control" name= "Day" id="Day">';
+            echo '<option value ="0">Vyber si deň obmedzenia</option>';
+            for ($y=0;$y < count($days);$y++){
+                echo '<option value="'.$days[$y].'" >'.$days[$y].'</option>';
+            }
+            echo '</select><label for="exerciseFrom">Čas:</label><br> <label class="control-label">od 
+                        <input type="time" class="form-inline" name= "From" id="From" min="00:00" max="23:59" value = null>
+                        do <input type="time" class="form-inline" name= "To" id="To" min="00:00" max="23:59" value = null>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Vložiť obmedzenie</button>
+                </form>';
         }
         else
             echo "<h1>Nesprávne navštívenie stránky</h1>";

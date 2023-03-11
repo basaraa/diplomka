@@ -1,7 +1,11 @@
 .nav-item:hover .dropdown-content {display: block;}
 .nav-item a:hover,.dropdown-content a:hover {background-color: red;}
-#success_insert,#result_edit{
+#success_insert,#result_edit,#succes_found_coinstraint{
     color: green;
+    position: center;
+}
+#no_coinstraint{
+    color: red;
     position: center;
 }
 .dropdown{

@@ -84,7 +84,27 @@ function generateEditForm(id,grade,year,semestre){
                 alert ("Nastala chyba skúste to znova")
             }
         });
-    }
+}
+
+//generate edit subject form
+$(function () {
+    $('.constraintListGet').on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'post',
+            url: 'postHandlers/teacherConstraints.php',
+            data: $('.constraintListGet').serialize(),
+            success: function (data) {
+                document.getElementById("modal_background").style.display="block";
+                document.getElementsByClassName("modal_div")[0].style.display="flex";
+                document.getElementById("modal_text").innerHTML=data;
+            },
+            error: function (){
+                alert ("Nastala chyba skúste to znova")
+            }
+        });
+    })
+});
 
 //generate options by grade
 $(function () {
@@ -98,6 +118,24 @@ $(function () {
           year.append($("<option></option>").attr("value",3).text("3. ročník"));
   })
 });
+
+$(function () {
+    $(".teachSelected").change(function(){
+        let id = $(".teachSelected option:selected").index();
+        $.ajax({
+            type: 'post',
+            url: 'postHandlers/teacherConstraints.php',
+            data: {id : id},
+            success: function (data) {
+                document.getElementById("teacherConstraintPlace").innerHTML=data;
+            },
+            error: function (){
+                alert ("Nastala chyba skúste to znova")
+            }
+        });
+    })
+});
+
 function go_back(){
     document.getElementById("modal_background").style.display="none";
     document.getElementsByClassName("modal_div")[0].style.display="none";

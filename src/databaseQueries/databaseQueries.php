@@ -29,21 +29,25 @@ function insertSubjectTeachers ($conn,$subjectId,$teacherId){
     $result = $conn->query($room) or die("Chyba pri vykonaní insert query: " . $conn->error);
     return $result;
 }
+function insertTeacherConstraints ($conn,$teacherId,$day,$timeFrom,$timeTo){
+    $room = "INSERT INTO TeacherConstraints (teacher_id,banned_day,time_from,time_to) VALUES ('$teacherId',NULLIF('$day','0'),NULLIF('$timeFrom',''),NULLIF('$timeTo',''))";
+    $result = $conn->query($room) or die("Chyba pri vykonaní insert query: " . $conn->error);
+    return $result;
+}
 
 //delete queries
 function delete($conn,$id,$type){
-    if ($type==0){
-        $sql= "DELETE FROM fieldsOfStudy where id='".$id."'";
-    }
-    else if ($type==1){
-        $sql= "DELETE FROM Teachers where id='".$id."'";
-    }
-    else if ($type==2){
-        $sql= "DELETE FROM Rooms where id='".$id."'";
-    }
-    else {
-        $sql= "DELETE FROM Subjects where id='".$id."'";
-    }
+    if ($type==0)
+        $sql = "DELETE FROM fieldsOfStudy where id='".$id."'";
+    else if ($type==1)
+        $sql = "DELETE FROM Teachers where id='".$id."'";
+    else if ($type==2)
+        $sql = "DELETE FROM Rooms where id='".$id."'";
+    else if ($type==3)
+        $sql = "DELETE FROM Subjects where id='".$id."'";
+    else
+        $sql = "DELETE FROM TeacherConstraints where id = '".$id."'";
+
     $result = $conn->query($sql) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
@@ -118,6 +122,12 @@ function selectFieldOfStudyBySubjectId($conn, $subjectId){
     $result = $conn->query($fieldOfStudies) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
+function selectTeacherConstraints ($conn,$teacherId){
+    $subject = "SELECT * FROM TeacherConstraints where teacher_id='".$teacherId."'";
+    $result = $conn->query($subject) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+
 //kontrola obmedzeni
 //by fieldOfStudy semestre lectures
 function checkSubjectLecturesInFieldOfStudyConstraint($conn,$subjectId,$fieldOfStudyId,$grade,$year,$semestre,$lectureDay,$exerciseDay,

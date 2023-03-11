@@ -28,6 +28,7 @@
                                 <a class="nav-link" href="addForm.php?type=1">Učiteľa</a>
                                 <a class="nav-link" href="addForm.php?type=2">Miestnosť</a>
                                 <a class="nav-link" href="addForm.php?type=0">Odbor</a>
+                                <a class="nav-link" href="addForm.php?type=4">Obmedzenie</a>
                             </div>
                         </li>
                         <li class="nav-item">
@@ -37,14 +38,16 @@
                                 <a class="nav-link" href="deleteForm.php?type=1">Učiteľa</a>
                                 <a class="nav-link" href="deleteForm.php?type=2">Miestnosť</a>
                                 <a class="nav-link" href="deleteForm.php?type=0">Odbor</a>
+                                <a class="nav-link" href="deleteForm.php?type=4">Obmedzenie</a>
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Zobraziť rozvrh</a>
+                            <a class="nav-link" href="#">Zobraziť</a>
                             <div class="dropdown-content">
-                                <a class="nav-link" href="semestreSchedule.php">Semestra</a>
-                                <a class="nav-link" href="teacherSchedule.php">Učiteľa</a>
-                                <a class="nav-link" href="roomSchedule.php">Miestnosti</a>
+                                <a class="nav-link" href="semestreSchedule.php">Rozvrh semestra</a>
+                                <a class="nav-link" href="teacherSchedule.php">Rozvrh učiteľa</a>
+                                <a class="nav-link" href="roomSchedule.php">Rozvrh miestnosti</a>
+                                <a class="nav-link" href="teacherConstraintsList.php">Obmedzenia učiteľov</a>
                             </div>
                         </li>
                     </ul>
