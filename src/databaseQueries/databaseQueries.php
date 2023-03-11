@@ -47,8 +47,8 @@ function delete($conn,$id,$type){
     $result = $conn->query($sql) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
-function deleteSubjectTeachers($conn,$id){
-    $sql= "DELETE FROM SubjectTeachers where subject_id='".$id."'";
+function deleteSubjectTeachers($conn,$id,$subjectTeachers){
+    $sql= "DELETE FROM SubjectTeachers where subject_id='".$id."' and teacher_id not in (".implode(',', $subjectTeachers).")" ;
     $result = $conn->query($sql) or die("Chyba pri vykonaní query: " . $conn->error);
 }
 function deleteSubjectTeachersByFieldOfStudies($conn,$id){
@@ -105,6 +105,13 @@ function selectTeachersBySubject ($conn,$subjectId){
     $result = $conn->query($teachers) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
+function selectTeachersBySubjectAndTeacherID ($conn,$subjectId,$teacherId){
+    $teachers = "SELECT Teachers.id,Teachers.name FROM Teachers 
+                JOIN SubjectTeachers ON Teachers.id=SubjectTeachers.teacher_id 
+                WHERE SubjectTeachers.subject_id='".$subjectId."' and SubjectTeachers.teacher_id='".$teacherId."'";
+    $result = $conn->query($teachers) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
 function selectFieldOfStudyBySubjectId($conn, $subjectId){
     $fieldOfStudies = "SELECT * FROM SubjectFieldOfStudies            
                  WHERE subject_id='".$subjectId."'";
@@ -116,7 +123,7 @@ function selectFieldOfStudyBySubjectId($conn, $subjectId){
 function checkSubjectLecturesInFieldOfStudyConstraint($conn,$subjectId,$fieldOfStudyId,$grade,$year,$semestre,$lectureDay,$exerciseDay,
                                                      $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
-    $subjects = "SELECT distinct * FROM Subjects JOIN SubjectFieldOfStudies ON Subjects.id= SubjectFieldOfStudies.subject_id           
+    $subjects = "SELECT distinct Subjects.id, Subjects.name FROM Subjects JOIN SubjectFieldOfStudies ON Subjects.id= SubjectFieldOfStudies.subject_id           
                  where Subjects.id !='".$subjectId."' and SubjectFieldOfStudies.fieldOfStudy_id='".$fieldOfStudyId."'
                  and Subjects.grade = '".$grade."' and Subjects.year = '".$year."' and Subjects.semestre = '".$semestre."'
                  and (
@@ -138,11 +145,12 @@ function checkSubjectLecturesInFieldOfStudyConstraint($conn,$subjectId,$fieldOfS
     return $result;
 
 }
+
 //by fieldOfStudy semestre exercises
 function checkSubjectExercisesInFieldOfStudyConstraint($conn,$subjectId,$fieldOfStudyId,$grade,$year,$semestre,$lectureDay,$exerciseDay,
                                                      $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
-    $subjects = "SELECT distinct * FROM Subjects JOIN SubjectFieldOfStudies ON Subjects.id= SubjectFieldOfStudies.subject_id           
+    $subjects = "SELECT distinct Subjects.id, Subjects.name FROM Subjects JOIN SubjectFieldOfStudies ON Subjects.id= SubjectFieldOfStudies.subject_id           
                  where Subjects.id !='".$subjectId."' and SubjectFieldOfStudies.fieldOfStudy_id='".$fieldOfStudyId."'
                  and Subjects.grade = '".$grade."' and Subjects.year = '".$year."' and Subjects.semestre = '".$semestre."'
                  and (
@@ -167,7 +175,7 @@ function checkSubjectExercisesInFieldOfStudyConstraint($conn,$subjectId,$fieldOf
 function checkSubjectLecturesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$lectureDay,$exerciseDay,
                                                       $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
-    $subjects = "SELECT distinct * FROM Subjects        
+    $subjects = "SELECT distinct Subjects.id, Subjects.name FROM Subjects        
                  where id !='".$subjectId."' and semestre = '".$semestre."' and room_id='".$roomId."'
                  and (
                      (lecture_day = '".$lectureDay."' 
@@ -186,14 +194,12 @@ function checkSubjectLecturesInRoomConstraint($conn,$subjectId,$semestre,$roomId
                  " ;
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
-    //return $subjects;
-
 }
 //by room exercises
 function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$lectureDay,$exerciseDay,
                                                        $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
-    $subjects = "SELECT distinct * FROM Subjects        
+    $subjects = "SELECT distinct Subjects.id, Subjects.name FROM Subjects        
                  where id !='".$subjectId."' and semestre = '".$semestre."' and room_id='".$roomId."'
                  and (
                      (exercise_day = '".$lectureDay."' 
@@ -213,6 +219,58 @@ function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomI
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
+
+//by room lectures
+function checkSubjectLecturesByTeacherConstraint($conn,$subjectId,$semestre,$teacherId,$lectureDay,$exerciseDay,
+                                              $fromLecture,$toLecture,$fromExercise,$toExercise)
+{
+    $subjects = "SELECT distinct Subjects.name as subjectName,Teachers.name as teacherName FROM Subjects 
+                 JOIN SubjectTeachers ON Subjects.id= SubjectTeachers.subject_id JOIN Teachers ON Teachers.id= SubjectTeachers.teacher_id         
+                 where Subjects.id !='".$subjectId."' and Subjects.semestre = '".$semestre."' and SubjectTeachers.teacher_id='".$teacherId."'
+                 and (
+                     (lecture_day = '".$lectureDay."' 
+                         and ('".$fromLecture."' between lecture_time_from and lecture_time_to
+                             or '".$toLecture."' between lecture_time_from and lecture_time_to
+                             or '".$fromLecture."' <= lecture_time_from AND '".$toLecture."' >= lecture_time_to
+                        )                        
+                    ) 
+                    or (lecture_day = '" . $exerciseDay . "'
+                        and ('".$fromExercise."' between lecture_time_from and lecture_time_to
+                             or '" .$toExercise."' between lecture_time_from and lecture_time_to
+                             or '" .$fromExercise."' <= lecture_time_from AND '".$toExercise."' >= lecture_time_to
+                        )
+                    )
+                )          
+                 " ;
+    $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+//by room exercises
+function checkSubjectExercisesByTeacherConstraint($conn,$subjectId,$semestre,$teacherId,$lectureDay,$exerciseDay,
+                                               $fromLecture,$toLecture,$fromExercise,$toExercise)
+{
+    $subjects = "SELECT distinct Subjects.name as subjectName,Teachers.name as teacherName FROM Subjects 
+                 JOIN SubjectTeachers ON Subjects.id= SubjectTeachers.subject_id JOIN Teachers ON Teachers.id= SubjectTeachers.teacher_id      
+                 where Subjects.id !='".$subjectId."' and Subjects.semestre = '".$semestre."' and SubjectTeachers.teacher_id='".$teacherId."'
+                 and (
+                     (exercise_day = '".$lectureDay."' 
+                         and ('".$fromLecture."' between exercise_time_from and exercise_time_to
+                             or '".$toLecture."' between exercise_time_from and exercise_time_to
+                             or '".$fromLecture."' <= exercise_time_from AND '".$toLecture."' >= exercise_time_to
+                        )                        
+                    ) 
+                    or (exercise_day = '" . $exerciseDay . "'
+                        and ('".$fromExercise."' between exercise_time_from and exercise_time_to
+                             or '" .$toExercise."' between exercise_time_from and exercise_time_to
+                             or '" .$fromExercise."' <= exercise_time_from AND '".$toExercise."' >= exercise_time_to
+                        )
+                    )
+                )     
+                 " ;
+    $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+
 //update
 function updateSubject ($conn,$id,$room_id,$lectureDay,$lectureFrom,$lectureTo,$exerciseDay,$exerciseFrom,$exerciseTo){
     $subject = "UPDATE Subjects

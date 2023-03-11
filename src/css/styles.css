@@ -41,7 +41,7 @@ header{
 select,input{
     margin-bottom: 15px;
 }
-#modal_background,#modal_background2{
+#modal_background,#modal_background2,#modal_background3{
     position: fixed;
     display: none;
     width:100%;
@@ -51,7 +51,7 @@ select,input{
     background: rgba(0,0,0,0.6);
     z-index:5;
 }
-.modal_div,.modal_div2{
+.modal_div,.modal_div2,.modal_div3{
     position: fixed;
     display: none;
     width:100%;
@@ -62,7 +62,7 @@ select,input{
     justify-content: center;
     z-index: 6;
 }
-#modal_vrstva,#modal_vrstva2{
+#modal_vrstva,#modal_vrstva2,#modal_vrstva3{
     position: fixed;
     background-color: lightblue;
     padding: 20px;
@@ -123,6 +123,10 @@ h5{
 p{
     padding-bottom: 4px;
     margin-bottom: 4px;
+}
+#modal_text3{
+    color:red;
+    font-size: 20px;
 }
 
 

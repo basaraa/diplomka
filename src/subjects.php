@@ -115,6 +115,14 @@ else http_response_code(400);
             <button class="btn btn-primary" onclick="window.location.href='subjects.php?study=<?=$study?>&grade=<?=$grade?>&year=<?=$year?>&semestre=<?=$semestre?>'">Vrátiť sa späť</button>
         </div>
     </div>
+    <div id="modal_background3"></div>
+    <div class="modal_div3">
+        <div id="modal_vrstva3">
+            <div id="modal_text3">
+            </div>
+            <button class="btn btn-primary" onclick="go_back2();">Vrátiť sa späť</button>
+        </div>
+    </div>
 <?php
 include "partials/footer.php";
 ?>

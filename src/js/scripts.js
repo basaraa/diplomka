@@ -46,8 +46,14 @@ $(function () {
             data: $('.editForm').serialize(),
             success: function (data) {
                 let result = JSON.parse(data)
-                if(result.scs===false)
-                    alert(result.msg)
+                if(result.scs===false){
+                    let FOSConstraint = result.FOSerr ? ("Zoznam kolízii pri štúdijnom odbore v ročníku v semestri pri predmetoch: "+result.FOSerr+"<br>") : '';
+                    let RoomConstraint = result.RoomErr ? ("Zoznam kolízii v miestnostiach pri predmetoch: "+result.RoomErr+"<br>") : '';
+                    let TeacherConstraint = result.TeacherErr ? ("Zoznam kolízii pri učiteľoch pri predmetoch (učiteľ:predmet): "+result.TeacherErr+"<br>") : '';
+                    document.getElementById("modal_background3").style.display="block";
+                    document.getElementsByClassName("modal_div3")[0].style.display="flex";
+                    document.getElementById("modal_text3").innerHTML=FOSConstraint + RoomConstraint + TeacherConstraint;
+                }
                 else{
                     document.getElementById("modal_background").style.display="none";
                     document.getElementsByClassName("modal_div")[0].style.display="none";
@@ -95,6 +101,10 @@ $(function () {
 function go_back(){
     document.getElementById("modal_background").style.display="none";
     document.getElementsByClassName("modal_div")[0].style.display="none";
+}
+function go_back2(){
+    document.getElementById("modal_background3").style.display="none";
+    document.getElementsByClassName("modal_div3")[0].style.display="none";
 }
 
 //reset single subject
