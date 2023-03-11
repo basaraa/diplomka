@@ -10,9 +10,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             echo'<select class="form-control" name= "id" id="id" required>';
             while ($constraint = mysqli_fetch_assoc($selected)) {
                 $id = $constraint["id"];
-                $day= $constraint["banned_day"] ? ("v ".$constraint["banned_day"]) : '';
-                $from = $constraint["time_from"] ? (" od ".$constraint["time_from"]) : '';
-                $to = $constraint["time_to"] ? (" do ".$constraint["time_to"]) : '';
+                $day= $constraint["banned_day"] ? $constraint["banned_day"] : '';
+                $from = " od ".date('h:i', strtotime($constraint["time_from"]));
+                $to = " do ".date('h:i', strtotime($constraint["time_to"]));
                 $name = $day.$from.$to;
                 echo "<option value= '$id'>$name</option>";
             }
@@ -32,9 +32,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     echo '<h1 id="succes_found_coinstraint">Zoznam obmedzení:</h1>';
                 }
                 $id = $constraint["id"];
-                $day= $constraint["banned_day"] ? ("v ".$constraint["banned_day"]) : '';
-                $from = $constraint["time_from"] ? (" od ".$constraint["time_from"]) : '';
-                $to = $constraint["time_to"] ? (" do ".$constraint["time_to"]) : '';
+                $day= $constraint["banned_day"] ? $constraint["banned_day"] : '';
+                $from = " od ".date('H:i', strtotime($constraint["time_from"]));
+                $to = " do ".date('H:i', strtotime($constraint["time_to"]));
                 $name = $day.$from.$to;
                 echo "<p>$name</p>";
             }

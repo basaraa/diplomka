@@ -20,7 +20,7 @@ echo '</select></div><button type="submit" class="btn btn-primary">Zobraziť zoz
 <div id="modal_background"></div>
 <div class="modal_div">
     <div id="modal_vrstva">
-            <div id="modal_text">
+            <div id="modal_textx">
             </div>
         <button class="btn btn-primary" onclick="go_back();">Vrátiť sa späť</button>
     </div>

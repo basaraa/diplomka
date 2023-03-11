@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hostiteľ: db
--- Čas generovania: So 18.Feb 2023, 09:00
+-- Čas generovania: So 11.Mar 2023, 10:25
 -- Verzia serveru: 8.0.32
 -- Verzia PHP: 8.0.19
 
@@ -70,10 +70,10 @@ CREATE TABLE `Subjects` (
   `grade` enum('bc.','ing.','phd.') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `year` enum('1','2','3') NOT NULL,
   `semestre` enum('ZS','LS') NOT NULL,
-  `lecture_day` varchar(9) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `lecture_day` enum('pondelok','utorok','streda','štvrtok','piatok') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `lecture_time_from` time DEFAULT NULL,
   `lecture_time_to` time DEFAULT NULL,
-  `exercise_day` varchar(9) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `exercise_day` enum('pondelok','utorok','streda','štvrtok','piatok') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `exercise_time_from` time DEFAULT NULL,
   `exercise_time_to` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -89,6 +89,20 @@ CREATE TABLE `SubjectTeachers` (
   `subject_id` int UNSIGNED NOT NULL,
   `teacher_id` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32;
+
+-- --------------------------------------------------------
+
+--
+-- Štruktúra tabuľky pre tabuľku `TeacherConstraints`
+--
+
+CREATE TABLE `TeacherConstraints` (
+  `id` int UNSIGNED NOT NULL,
+  `teacher_id` int UNSIGNED NOT NULL,
+  `banned_day` enum('pondelok','utorok','streda','štvrtok','piatok') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `time_from` time DEFAULT NULL,
+  `time_to` time DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -141,6 +155,13 @@ ALTER TABLE `SubjectTeachers`
   ADD KEY `teacher_id` (`teacher_id`);
 
 --
+-- Indexy pre tabuľku `TeacherConstraints`
+--
+ALTER TABLE `TeacherConstraints`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `teacher_id` (`teacher_id`);
+
+--
 -- Indexy pre tabuľku `Teachers`
 --
 ALTER TABLE `Teachers`
@@ -181,6 +202,12 @@ ALTER TABLE `SubjectTeachers`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT pre tabuľku `TeacherConstraints`
+--
+ALTER TABLE `TeacherConstraints`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT pre tabuľku `Teachers`
 --
 ALTER TABLE `Teachers`
@@ -209,6 +236,12 @@ ALTER TABLE `Subjects`
 ALTER TABLE `SubjectTeachers`
   ADD CONSTRAINT `SubjectTeachers_ibfk_1` FOREIGN KEY (`subject_id`) REFERENCES `Subjects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `SubjectTeachers_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `Teachers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Obmedzenie pre tabuľku `TeacherConstraints`
+--
+ALTER TABLE `TeacherConstraints`
+  ADD CONSTRAINT `TeacherConstraints_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `Teachers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -24,6 +24,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $RoomErrorSubjects=[];
         $TeacherErrorMessage='';
         $TeacherErrorSubjects=[];
+        $TeacherCustomErrorMessage='';
+        $TeacherCustomErrorConstraints=[];
         $x =0;
         //fieldOfStudy semestre contraint check
         $subjectFieldOfStudies = selectFieldOfStudyBySubjectId($conn,$id);
@@ -34,7 +36,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $selectedSubjectsE=checkSubjectExercisesInFieldOfStudyConstraint($conn,$id,$fieldOfStudy["fieldOfStudy_id"],$grade,$year,$semestre,$lectureDay,$exerciseDay,
                     $lectureFrom,$lectureTo,$exerciseFrom,$exerciseTo);
                 if (($selectedSubjects && ($selectedSubjects->num_rows)>0) or ($selectedSubjectsE && ($selectedSubjectsE->num_rows)>0) ){
-
                     while ($subj=mysqli_fetch_assoc($selectedSubjects))
                         if(!in_array($subj["name"],$FOSErrorSubjects))
                             array_push($FOSErrorSubjects,$subj["name"]);
@@ -69,6 +70,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $lectureFrom,$lectureTo,$exerciseFrom,$exerciseTo);
             $teacherSubjectsE=checkSubjectExercisesByTeacherConstraint($conn,$id,$semestre,$teacherId,$lectureDay,$exerciseDay,
                 $lectureFrom,$lectureTo,$exerciseFrom,$exerciseTo);
+            $teacherCustomConstraints=checkTeacherCustomConstraint($conn,$teacherId,$lectureDay,$exerciseDay,
+                        $lectureFrom,$lectureTo,$exerciseFrom,$exerciseTo);
+            if (($teacherCustomConstraints && ($teacherCustomConstraints->num_rows)>0)){
+                while ($constraint=mysqli_fetch_assoc($teacherCustomConstraints)){
+                    $day= $constraint["banned_day"] ? ("v ".$constraint["banned_day"]) : '';
+                    $from = " od ".date('H:i', strtotime($constraint["time_from"]));
+                    $to = " do ".date('H:i', strtotime($constraint["time_to"]));
+                    $y=$constraint["teacherName"].": (".$day.$from.$to.")";
+                    if(!in_array($y,$TeacherCustomErrorConstraints))
+                        array_push($TeacherCustomErrorConstraints,$y);
+                }
+            }
+
             if (($teacherSubjects && ($teacherSubjects->num_rows)>0) or ($teacherSubjectsE && ($teacherSubjectsE->num_rows)>0) ){
                 while ($subj=mysqli_fetch_assoc($teacherSubjects)){
                     $y=$subj["teacherName"].":".$subj["subjectName"];
@@ -84,8 +98,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         foreach ($TeacherErrorSubjects as $subjectName)
             $TeacherErrorMessage.='"'.$subjectName.'",';
+        foreach ($TeacherCustomErrorConstraints as $constraintName)
+            $TeacherCustomErrorMessage.='"'.$constraintName.'",';
 
-        if (empty($FOSErrorMessage) && empty($RoomErrorMessage) && empty($TeacherErrorMessage)){
+        if (empty($FOSErrorMessage) && empty($RoomErrorMessage) && empty($TeacherErrorMessage) && empty ($TeacherCustomErrorMessage)){
             $result=updateSubject($conn,$id,$room_id,$lectureDay,$lectureFrom,$lectureTo,$exerciseDay,$exerciseFrom,$exerciseTo);
             if ($result){
                 deleteSubjectTeachers($conn,$id,$subjectTeachers);
@@ -94,12 +110,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                     if(!($selectedByTeacherId && ($selectedByTeacherId->num_rows)>0))
                         $resultTeacher=insertSubjectTeachers($conn,$id,$teacherId);
                 }
-                echo json_encode(["scs" => true,"msg" => "Nenastala žiadna kolízia - predmet bol úspešne upravený"]);;
+                echo json_encode(["scs" => true,"msg" => "Nenastala žiadna kolízia - predmet bol úspešne upravený"]);
             }
             else echo http_response_code(400);
         }
         else
-            echo json_encode(["scs" => false,"FOSerr" => $FOSErrorMessage, "RoomErr" => $RoomErrorMessage, "TeacherErr" => $TeacherErrorMessage]);
+            echo json_encode(["scs" => false,"FOSerr" => $FOSErrorMessage, "RoomErr" => $RoomErrorMessage,
+                "TeacherErr" => $TeacherErrorMessage, "TeacherCustomErr" => $TeacherCustomErrorMessage]);
     }
     else echo http_response_code(400);
 }

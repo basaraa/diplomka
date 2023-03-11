@@ -30,7 +30,7 @@ function insertSubjectTeachers ($conn,$subjectId,$teacherId){
     return $result;
 }
 function insertTeacherConstraints ($conn,$teacherId,$day,$timeFrom,$timeTo){
-    $room = "INSERT INTO TeacherConstraints (teacher_id,banned_day,time_from,time_to) VALUES ('$teacherId',NULLIF('$day','0'),NULLIF('$timeFrom',''),NULLIF('$timeTo',''))";
+    $room = "INSERT INTO TeacherConstraints (teacher_id,banned_day,time_from,time_to) VALUES ('$teacherId',NULLIF('$day','0'),'$timeFrom','$timeTo')";
     $result = $conn->query($room) or die("Chyba pri vykonaní insert query: " . $conn->error);
     return $result;
 }
@@ -230,7 +230,7 @@ function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomI
     return $result;
 }
 
-//by room lectures
+//by teacher lectures
 function checkSubjectLecturesByTeacherConstraint($conn,$subjectId,$semestre,$teacherId,$lectureDay,$exerciseDay,
                                               $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
@@ -255,7 +255,7 @@ function checkSubjectLecturesByTeacherConstraint($conn,$subjectId,$semestre,$tea
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
-//by room exercises
+//by teacher exercises
 function checkSubjectExercisesByTeacherConstraint($conn,$subjectId,$semestre,$teacherId,$lectureDay,$exerciseDay,
                                                $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
@@ -273,6 +273,41 @@ function checkSubjectExercisesByTeacherConstraint($conn,$subjectId,$semestre,$te
                         and ('".$fromExercise."' between exercise_time_from and exercise_time_to
                              or '" .$toExercise."' between exercise_time_from and exercise_time_to
                              or '" .$fromExercise."' <= exercise_time_from AND '".$toExercise."' >= exercise_time_to
+                        )
+                    )
+                )     
+                 " ;
+    $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+
+//by teacher selected constraints
+function checkTeacherCustomConstraint($conn,$teacherId,$lectureDay,$exerciseDay,
+                                                  $fromLecture,$toLecture,$fromExercise,$toExercise)
+{
+    $subjects = "SELECT distinct banned_day,time_from,time_to, Teachers.name as teacherName FROM TeacherConstraints 
+                JOIN Teachers ON TeacherConstraints.teacher_id=Teachers.id                  
+                 where teacher_id='".$teacherId."'
+                 and (
+                     (banned_day = '".$lectureDay."' 
+                         and ('".$fromLecture."' between time_from and time_to
+                             or '".$toLecture."' between time_from and time_to
+                             or '".$fromLecture."' <= time_from AND '".$toLecture."' >= time_to
+                        )                        
+                    ) 
+                    or (banned_day = '" . $exerciseDay . "'
+                        and ('".$fromExercise."' between time_from and time_to
+                             or '" .$toExercise."' between time_from and time_to
+                             or '" .$fromExercise."' <= time_from AND '".$toExercise."' >= time_to
+                        )
+                    )
+                    or (banned_day = null
+                        and ('".$fromLecture."' between time_from and time_to
+                             or '".$toLecture."' between time_from and time_to
+                             or '".$fromLecture."' <= time_from AND '".$toLecture."' >= time_to 
+                             or '".$fromExercise."' between time_from and time_to
+                             or '" .$toExercise."' between time_from and time_to
+                             or '" .$fromExercise."' <= time_from AND '".$toExercise."' >= time_to
                         )
                     )
                 )     
