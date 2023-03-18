@@ -2,19 +2,20 @@
 require_once("../config/config.php");
 include "../databaseQueries/databaseQueries.php";
 if($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["subjectId"]) && isset($_POST["room_id"]) && isset($_POST["subjectTeachers"]) &&
+    if (isset($_POST["subjectId"]) && isset($_POST["lecture_room_id"]) && isset($_POST["exercise_room_id"]) && isset($_POST["subjectTeachers"]) &&
         isset($_POST["lectureDay"]) && isset($_POST["lectureFrom"]) && isset($_POST["lectureTo"]) &&
         isset($_POST["exerciseDay"]) && isset($_POST["exerciseFrom"]) && isset($_POST["exerciseTo"]) &&
         isset($_POST["grade"]) && isset($_POST["semestre"]) && isset($_POST["year"])) {
         $id = $_POST["subjectId"];
-        $room_id = $_POST["room_id"];
+        $lecture_room_id = $_POST["lecture_room_id"];
+        $exercise_room_id = $_POST["exercise_room_id"];
         $subjectTeachers = $_POST["subjectTeachers"];
         $lectureDay=$_POST["lectureDay"];
         $exerciseDay=$_POST["exerciseDay"];
-        $lectureFrom=$_POST["lectureFrom"];
-        $lectureTo=$_POST["lectureTo"];
-        $exerciseFrom=$_POST["exerciseFrom"];
-        $exerciseTo=$_POST["exerciseTo"];
+        $lectureFrom=$_POST["lectureFrom"].":"."00";
+        $lectureTo=$_POST["lectureTo"].":"."50";
+        $exerciseFrom=$_POST["exerciseFrom"].":"."00";
+        $exerciseTo=$_POST["exerciseTo"].":"."50";
         $grade =$_POST["grade"];
         $year = $_POST["year"];
         $semestre = $_POST["semestre"];
@@ -49,10 +50,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         $x=0;
         //room check constraint
-        $roomSubjects=checkSubjectLecturesInRoomConstraint($conn,$id,$semestre,$room_id,$lectureDay,$exerciseDay,
-            $lectureFrom,$lectureTo,$exerciseFrom,$exerciseTo);
-        $roomSubjectsE=checkSubjectExercisesInRoomConstraint($conn,$id,$semestre,$room_id,$lectureDay,$exerciseDay,
-            $lectureFrom,$lectureTo,$exerciseFrom,$exerciseTo);
+        $roomSubjects=checkSubjectLecturesInRoomConstraint($conn,$id,$semestre,$lecture_room_id,$lectureDay,
+            $lectureFrom,$lectureTo);
+        $roomSubjectsE=checkSubjectExercisesInRoomConstraint($conn,$id,$semestre,$exercise_room_id,$exerciseDay,
+            $exerciseFrom,$exerciseTo);
         if (($roomSubjects && ($roomSubjects->num_rows)>0) || ($roomSubjectsE && ($roomSubjectsE->num_rows)>0)){
             while ($subj=mysqli_fetch_assoc($roomSubjects))
                 if(!in_array($subj["name"],$RoomErrorSubjects))
@@ -102,7 +103,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             $TeacherCustomErrorMessage.='"'.$constraintName.'",';
 
         if (empty($FOSErrorMessage) && empty($RoomErrorMessage) && empty($TeacherErrorMessage) && empty ($TeacherCustomErrorMessage)){
-            $result=updateSubject($conn,$id,$room_id,$lectureDay,$lectureFrom,$lectureTo,$exerciseDay,$exerciseFrom,$exerciseTo);
+            $result=updateSubject($conn,$id,$lecture_room_id,$exercise_room_id,$lectureDay,$lectureFrom,$lectureTo,$exerciseDay,$exerciseFrom,$exerciseTo);
             if ($result){
                 deleteSubjectTeachers($conn,$id,$subjectTeachers);
                 foreach ($subjectTeachers as $teacherId){

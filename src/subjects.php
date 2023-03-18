@@ -13,7 +13,8 @@ if (isset($_GET["study"]) && isset($_GET["grade"]) && isset($_GET["year"]) && is
         while ($subject = mysqli_fetch_assoc($selected)) {
             $name = $subject["name"];
             $shortcut = $subject["shortcut"];
-            $room_id = $subject["room_id"];
+            $lecture_room_id = $subject["lecture_room_id"];
+            $exercise_room_id = $subject["exercise_room_id"];
             $lectureDay=$subject["lecture_day"];
             $exerciseDay=$subject["exercise_day"];
             $lectureFrom=$subject["lecture_time_from"];
@@ -25,17 +26,8 @@ if (isset($_GET["study"]) && isset($_GET["grade"]) && isset($_GET["year"]) && is
                   <p>'.$name.'</p>
                   <h5>Skratka:</h5>
                   <p>'.$shortcut.'</p>
-                  <h5>Miestnosť:</h5>                 
+                                   
                   ';
-            if ($room_id){
-                $result=selectRoomById($conn,$room_id);
-                if ($result){
-                    $room=mysqli_fetch_assoc($result);
-                    echo'<p>'.$room["name"].'</p>';
-                }
-            }
-            else
-                echo '<p>nezadané</p>';
             echo '<h5>Vyučujúci:</h5><p>';
             $selectedTeachers = selectTeachersBySubject($conn,$subject["id"]);
             if ($selectedTeachers) {
@@ -48,6 +40,16 @@ if (isset($_GET["study"]) && isset($_GET["grade"]) && isset($_GET["year"]) && is
                 }
                 if ($x===0)
                     echo '<p>nezadané</p>';
+            }
+            else
+                echo '<p>nezadané</p>';
+            echo '<h5>Miestnosť prednášky:</h5>';
+            if ($lecture_room_id){
+                $result=selectRoomById($conn,$lecture_room_id);
+                if ($result){
+                    $room=mysqli_fetch_assoc($result);
+                    echo'<p>'.$room["name"].'</p>';
+                }
             }
             else
                 echo '<p>nezadané</p>';
@@ -65,7 +67,16 @@ if (isset($_GET["study"]) && isset($_GET["grade"]) && isset($_GET["year"]) && is
             else
                 echo 'nezadaný čas';
             echo '</p>';
-
+            echo '<h5>Miestnosť cvičenia:</h5>';
+            if ($exercise_room_id){
+                $result=selectRoomById($conn,$exercise_room_id);
+                if ($result){
+                    $room=mysqli_fetch_assoc($result);
+                    echo'<p>'.$room["name"].'</p>';
+                }
+            }
+            else
+                echo '<p>nezadané</p>';
             echo'<h5>Čas cvičenia:</h5>';
             if ($exerciseDay)
                 echo '<p>'.$exerciseDay.' </p><p>';

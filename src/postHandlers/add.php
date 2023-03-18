@@ -2,6 +2,7 @@
 require_once("../config/config.php");
 include "../databaseQueries/databaseQueries.php";
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+    //field of study
     if (isset($_POST["type"])){
         if ($_POST["type"]==0){
             if (isset($_POST["name"])){
@@ -15,6 +16,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
             else http_response_code(400);
         }
+        //teacher
         else if ($_POST["type"]==1){
             if (isset($_POST["name"])){
                 $name = $_POST["name"];
@@ -27,11 +29,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
             else http_response_code(400);
         }
+        //room
         else if ($_POST["type"]==2){
-            if (isset($_POST["name"]) && isset($_POST["roomType"])){
-                $roomType = $_POST["roomType"];
+            if (isset($_POST["name"])){
                 $name = $_POST["name"];
-                $result = insertRoom($conn,$name,$roomType);
+                $result = insertRoom($conn,$name);
                 if($result)
                 {
                     echo 1;
@@ -40,6 +42,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
             else http_response_code(400);
         }
+        //subject
         else if ($_POST["type"]==3){
             if (isset($_POST["name"])&&isset($_POST["shortcut"])&&isset($_POST["grade"])&&isset($_POST["year"])&&isset($_POST["semestre"])&&isset($_POST["fieldOfStudies"])){
                 $name = $_POST["name"];
@@ -62,6 +65,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
             else http_response_code(400);
         }
+        //custom constraint
         else if ($_POST["type"]==4){
             if (isset($_POST["id"]) && isset($_POST["Day"]) && isset($_POST["From"]) && isset($_POST["To"])){
                 $teacherId= $_POST["id"];

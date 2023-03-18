@@ -10,8 +10,8 @@ function insertTeacher ($conn,$name){
     $result = $conn->query($teacher) or die("Chyba pri vykonaní insert query: " . $conn->error);
     return $result;
 }
-function insertRoom ($conn,$name,$roomType){
-    $room = "INSERT INTO Rooms (name,room_type) VALUES ('$name','$roomType')";
+function insertRoom ($conn,$name){
+    $room = "INSERT INTO Rooms (name) VALUES ('$name')";
     $result = $conn->query($room) or die("Chyba pri vykonaní insert query: " . $conn->error);
     return $result;
 }
@@ -83,7 +83,7 @@ function selectAllSubjects ($conn){
     return $result;
 }
 function selectSubjectByStudyGradeYearSemestre ($conn,$study,$grade,$year,$semestre){
-    $subjects = "SELECT Subjects.id,Subjects.name,Subjects.shortcut,Subjects.room_id,
+    $subjects = "SELECT Subjects.id,Subjects.name,Subjects.shortcut,Subjects.lecture_room_id,Subjects.exercise_room_id,
                 Subjects.lecture_day,Subjects.lecture_time_from,Subjects.lecture_time_to,
                 Subjects.exercise_day,Subjects.exercise_time_from,Subjects.exercise_time_to
                 FROM Subjects JOIN SubjectFieldOfStudies ON Subjects.id=SubjectFieldOfStudies.subject_id 
@@ -182,49 +182,31 @@ function checkSubjectExercisesInFieldOfStudyConstraint($conn,$subjectId,$fieldOf
     return $result;
 }
 //by room lectures
-function checkSubjectLecturesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$lectureDay,$exerciseDay,
-                                                      $fromLecture,$toLecture,$fromExercise,$toExercise)
+function checkSubjectLecturesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$lectureDay,
+                                                      $fromLecture,$toLecture)
 {
     $subjects = "SELECT distinct Subjects.id, Subjects.name FROM Subjects        
-                 where id !='".$subjectId."' and semestre = '".$semestre."' and room_id='".$roomId."'
-                 and (
-                     (lecture_day = '".$lectureDay."' 
+                 where id !='".$subjectId."' and semestre = '".$semestre."' and lecture_room_id='".$roomId."'
+                 and lecture_day = '".$lectureDay."' 
                          and ('".$fromLecture."' between lecture_time_from and lecture_time_to
                              or '".$toLecture."' between lecture_time_from and lecture_time_to
-                             or '".$fromLecture."' <= lecture_time_from AND '".$toLecture."' >= lecture_time_to
-                        )                        
-                    ) 
-                    or (lecture_day = '" . $exerciseDay . "'
-                        and ('".$fromExercise."' between lecture_time_from and lecture_time_to
-                             or '" .$toExercise."' between lecture_time_from and lecture_time_to
-                             or '" .$fromExercise."' <= lecture_time_from AND '".$toExercise."' >= lecture_time_to
-                        )
-                    )
-                )          
+                             or '".$fromLecture."' <= lecture_time_from and '".$toLecture."' >= lecture_time_to
+                        )                                                
                  " ;
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
 //by room exercises
-function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$lectureDay,$exerciseDay,
-                                                       $fromLecture,$toLecture,$fromExercise,$toExercise)
+function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$exerciseDay
+                                                       ,$fromExercise,$toExercise)
 {
     $subjects = "SELECT distinct Subjects.id, Subjects.name FROM Subjects        
-                 where id !='".$subjectId."' and semestre = '".$semestre."' and room_id='".$roomId."'
-                 and (
-                     (exercise_day = '".$lectureDay."' 
-                         and ('".$fromLecture."' between exercise_time_from and exercise_time_to
-                             or '".$toLecture."' between exercise_time_from and exercise_time_to
-                             or '".$fromLecture."' <= exercise_time_from AND '".$toLecture."' >= exercise_time_to
-                        )                        
-                    ) 
-                    or (exercise_day = '" . $exerciseDay . "'
+                 where id !='".$subjectId."' and semestre = '".$semestre."' and exercise_room_id='".$roomId."'
+                 and exercise_day = '" . $exerciseDay . "'
                         and ('".$fromExercise."' between exercise_time_from and exercise_time_to
                              or '" .$toExercise."' between exercise_time_from and exercise_time_to
                              or '" .$fromExercise."' <= exercise_time_from AND '".$toExercise."' >= exercise_time_to
-                        )
-                    )
-                )     
+                        )                                   
                  " ;
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
@@ -289,27 +271,18 @@ function checkTeacherCustomConstraint($conn,$teacherId,$lectureDay,$exerciseDay,
                 JOIN Teachers ON TeacherConstraints.teacher_id=Teachers.id                  
                  where teacher_id='".$teacherId."'
                  and (
-                     (banned_day = '".$lectureDay."' 
+                     ((banned_day = '".$lectureDay."' or banned_day = null) 
                          and ('".$fromLecture."' between time_from and time_to
                              or '".$toLecture."' between time_from and time_to
                              or '".$fromLecture."' <= time_from AND '".$toLecture."' >= time_to
                         )                        
                     ) 
-                    or (banned_day = '" . $exerciseDay . "'
+                    or ((banned_day = '" . $exerciseDay . "' or banned_day = null)
                         and ('".$fromExercise."' between time_from and time_to
                              or '" .$toExercise."' between time_from and time_to
                              or '" .$fromExercise."' <= time_from AND '".$toExercise."' >= time_to
                         )
-                    )
-                    or (banned_day = null
-                        and ('".$fromLecture."' between time_from and time_to
-                             or '".$toLecture."' between time_from and time_to
-                             or '".$fromLecture."' <= time_from AND '".$toLecture."' >= time_to 
-                             or '".$fromExercise."' between time_from and time_to
-                             or '" .$toExercise."' between time_from and time_to
-                             or '" .$fromExercise."' <= time_from AND '".$toExercise."' >= time_to
-                        )
-                    )
+                    )                  
                 )     
                  " ;
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
@@ -317,9 +290,9 @@ function checkTeacherCustomConstraint($conn,$teacherId,$lectureDay,$exerciseDay,
 }
 
 //update
-function updateSubject ($conn,$id,$room_id,$lectureDay,$lectureFrom,$lectureTo,$exerciseDay,$exerciseFrom,$exerciseTo){
+function updateSubject ($conn,$id,$lecture_room_id,$exercise_room_id,$lectureDay,$lectureFrom,$lectureTo,$exerciseDay,$exerciseFrom,$exerciseTo){
     $subject = "UPDATE Subjects
-                SET room_id='".$room_id."', lecture_day='".$lectureDay."',
+                SET lecture_room_id='".$lecture_room_id."',exercise_room_id='".$exercise_room_id."', lecture_day='".$lectureDay."',
                 lecture_time_from = '".$lectureFrom."', lecture_time_to = '".$lectureTo."',
                 exercise_day='".$exerciseDay."',exercise_time_from = '".$exerciseFrom."', exercise_time_to = '".$exerciseTo."'           
                 WHERE id='".$id."'";
@@ -331,7 +304,7 @@ function resetSubjects($conn,$id,$type){
     if ($type==0){
         deleteSubjectTeachers($conn,$id);
         $sql= "UPDATE Subjects
-                SET room_id=null, lecture_day=null,
+                SET lecture_room_id=null,exercise_room_id=null, lecture_day=null,
                 lecture_time_from = null, lecture_time_to = null,
                 exercise_day=null,exercise_time_from = null, exercise_time_to = null           
                 WHERE id='".$id."'";
@@ -339,7 +312,7 @@ function resetSubjects($conn,$id,$type){
     else if ($type==1){
         deleteSubjectTeachersByFieldOfStudies($conn,$id);
         $sql= "UPDATE Subjects JOIN SubjectFieldOfStudies ON Subjects.id = SubjectFieldOfStudies.subject_id
-                SET Subjects.room_id=null, Subjects.lecture_day=null,
+                SET Subjects.lecture_room_id=null,Subjects.exercise_room_id=null, Subjects.lecture_day=null,
                 Subjects.lecture_time_from = null, Subjects.lecture_time_to = null,
                 Subjects.exercise_day=null,Subjects.exercise_time_from = null, Subjects.exercise_time_to = null           
                 WHERE SubjectFieldOfStudies.fieldOfStudy_id='".$id."'";

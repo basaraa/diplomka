@@ -136,6 +136,46 @@ p{
     font-size: 18px;
     font-weight: bold;
 }
+.numberPlace{
+    width: 50px;
+}
+.tabulka {
+    text-align:center;
+    border-color: black;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.tabulka td{
+    border: solid black 1px;
+}
+
+.tabulka thead{
+    font-weight:bold;
+    background-color:lightgray;
+    color:red;
+    border: solid black 1px;
+}
+
+.tabulka tbody{
+    color:black;
+    border: solid black 1px;
+}
+
+.dni_tabulky {
+    font-weight:bold;
+    background-color:lightgray;
+    color:red;
+}
+
+.tabulka_cvicenie {
+    background-color:lightskyblue;
+}
+
+.tabulka_prednaska {
+    background-color:limegreen;
+}
+
 
 
 

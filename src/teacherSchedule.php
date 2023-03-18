@@ -5,7 +5,53 @@ include "databaseQueries/databaseQueries.php";
 if (isset($_POST["semestre"])&&isset($_POST["teacherId"])){
     $semestre =$_POST["semestre"];
     $roomId= $_POST["teacherId"];
-    echo'vybrali ste rozvrh pre učiteľa s id '.$roomId.' v semestry '.$semestre.'';
+    //echo'vybrali ste rozvrh pre učiteľa s id '.$roomId.' v semestry '.$semestre.'';
+    echo '<table class="tabulka"><thead>
+        <tr>
+            <td>Deň/čas</td>
+            <td>5:00-5:50</td>
+            <td>6:00-6:50</td>
+            <td>7:00-7:50</td>
+            <td>8:00-8:50</td>
+            <td>9:00-9:50</td>
+            <td>10:00-10:50</td>
+            <td>11:00-11:50</td>
+            <td>12:00-12:50</td>
+            <td>13:00-13:50</td>
+            <td>14:00-14:50</td>
+            <td>15:00-15:50</td>
+            <td>16:00-16:50</td>
+            <td>17:00-17:50</td>
+            <td>18:00-18:50</td>
+            <td>19:00-19:50</td>
+            <td>20:00-20:50</td>
+            <td>21:00-21:50</td>
+            <td>22:00-22:50</td>
+            <td>23:00-23:50</td>
+        </tr>
+        </thead>
+        <tbody>';
+    echo '<tr>
+            <td class="dni_tabulky">Po</td>   
+            <td colspan="19"></td>         
+        </tr>';
+    echo '<tr>
+            <td class="dni_tabulky">Ut</td> 
+            <td colspan="19"></td>           
+        </tr>';
+    echo '<tr>
+            <td class="dni_tabulky">St</td>  
+            <td colspan="19"></td>            
+        </tr>';
+    echo '<tr>
+            <td class="dni_tabulky">Št</td> 
+            <td colspan="19"></td>             
+        </tr>';
+    echo '<tr>
+            <td class="dni_tabulky">Pi</td> 
+            <td colspan="19"></td>             
+        </tr>';
+    echo '</tbody></table>';
 }
 else {
     echo '<form class="form" action="teacherSchedule.php" method="post" enctype="multipart/form-data" name = "getSchedule">
