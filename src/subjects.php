@@ -7,6 +7,9 @@ if (isset($_GET["study"]) && isset($_GET["grade"]) && isset($_GET["year"]) && is
     $grade = $_GET["grade"];
     $year = $_GET["year"];
     $semestre = $_GET["semestre"];
+    $fieldOfStudyName=selectFieldOfStudyById($conn,$study);
+    if ($fieldOfStudyName)
+        echo '<h2 class="purple">Rozvrh pre '.mysqli_fetch_assoc($fieldOfStudyName)["name"].' v '.$grade.' štúdiu v '.$year.'.ročníku v '.$semestre.'</h2>';
     $selected = selectSubjectByStudyGradeYearSemestre($conn,$study,$grade,$year,$semestre);
     if ($selected) {
         echo '<div class="flexdiv">';

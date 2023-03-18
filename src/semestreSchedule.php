@@ -2,7 +2,15 @@
 include "partials/header.php";
 require_once("config/config.php");
 include "databaseQueries/databaseQueries.php";
-if (isset($_GET["study"])&& isset($_GET["year"])&&isset($_GET["semestre"])){
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["study"])&& isset($_GET["grade"])&& isset($_GET["year"])&&isset($_GET["semestre"])){
+    $study = $_GET["study"];
+    $grade = $_GET["grade"];
+    $year = $_GET["year"];
+    $semestre = $_GET["semestre"];
+    $days=["pondelok","utorok","streda","štvrtok","piatok"];
+    $fieldOfStudyName=selectFieldOfStudyById($conn,$study);
+    if ($fieldOfStudyName)
+        echo '<h2 class="purple">Rozvrh pre '.mysqli_fetch_assoc($fieldOfStudyName)["name"].' v '.$grade.' štúdiu v '.$year.'.ročníku v '.$semestre.'</h2>';
     echo '<table class="tabulka"><thead>
         <tr>
             <td>Deň/čas</td>
@@ -28,32 +36,54 @@ if (isset($_GET["study"])&& isset($_GET["year"])&&isset($_GET["semestre"])){
         </tr>
         </thead>
         <tbody>';
-    echo '<tr>
-            <td class="dni_tabulky">Po</td>   
-            <td colspan="19"></td>         
-        </tr>';
-    echo '<tr>
-            <td class="dni_tabulky">Ut</td> 
-            <td colspan="19"></td>           
-        </tr>';
-    echo '<tr>
-            <td class="dni_tabulky">St</td>  
-            <td colspan="19"></td>            
-        </tr>';
-    echo '<tr>
-            <td class="dni_tabulky">Št</td> 
-            <td colspan="19"></td>             
-        </tr>';
-    echo '<tr>
-            <td class="dni_tabulky">Pi</td> 
-            <td colspan="19"></td>             
-        </tr>';
+    foreach ($days as $day){
+        $selected = selectSubjectsByStudyGradeYearSemestreDay($conn,$study,$grade,$year,$semestre,$day);
+        if ($selected) {
+            $hour=5;
+            echo '<tr>
+                    <td class="day">'.mb_substr($day, 0,2,"utf-8").'</td>';
+            if (($selected->num_rows)==0)
+                echo '<td colspan="19"></td>';
+            else {
+                while ($subject = mysqli_fetch_assoc($selected)) {
+                    $name=$subject["name"];
+                    $roomName=$subject["room_name"];
+                    $type=$subject["type"];
+                    $timeFrom=intval($subject["time_from"]);
+                    $timeTo=intval($subject["time_to"]);
+                    $selectedTeachers = selectTeachersBySubject($conn,$subject["id"]);
+                    $teachers='';
+                    if ($selectedTeachers) {
+                        $x=0;
+                        while ($teacher = mysqli_fetch_assoc($selectedTeachers)){
+                            if ($x!==0)
+                                $teachers.=", ";
+                            $x=1;
+                            $teachers.=$teacher["name"];
+                        }
+                    }
+
+                    //miesto medzi prednáškami/cvičeniami
+                    $diffFrom=$timeFrom-$hour;
+                    if ($diffFrom>0)
+                        echo '<td colspan="'.$diffFrom.'"></td>';
+                    //prednáška/cvičenie
+                    $diffFromTo = $timeTo - $timeFrom;
+                    echo '<td class="'.$type.'" colspan="'.$diffFromTo.'">'.$roomName.' <br> '.$name.' <br> '.$teachers.'</td>';
+                    $hour=$hour+$diffFrom+$diffFromTo;
+                }
+
+            }
+        }
+        echo '</tr>';
+    }
     echo '</tbody></table>';
-    //echo"vybrali ste rozvrh pre elektroenergetiku";
+    echo '<div class="legend"> <h4 class="purple">Legenda k rozvrhu: </h4>';
+    echo '<span class="legend_item lecture">Prednáška</span><span class="legend_item exercise">Cvičenie</span></div>';
+
 }
 else{
-    $link = $conn;
-    $selected = selectAllFieldsOfStudy($link);
+    $selected = selectAllFieldsOfStudy($conn);
     if ($selected){
         while ($fieldOfStudy=mysqli_fetch_assoc($selected)){
             $name= $fieldOfStudy["name"];

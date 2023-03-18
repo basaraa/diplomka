@@ -162,18 +162,35 @@ p{
     border: solid black 1px;
 }
 
-.dni_tabulky {
+.day {
     font-weight:bold;
     background-color:lightgray;
     color:red;
 }
 
-.tabulka_cvicenie {
+.exercise {
     background-color:lightskyblue;
 }
 
-.tabulka_prednaska {
+.lecture {
     background-color:limegreen;
+}
+.legend{
+    position:center;
+    text-align: center;
+    color: black;
+}
+
+.legend_item{
+    border: solid black 1px;
+    width: 150px;
+    height: 60px;
+    line-height: 60px;
+    list-style-type: none;
+    display: inline-block;
+}
+.purple{
+    color:purple;
 }
 
 

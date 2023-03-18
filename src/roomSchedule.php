@@ -2,10 +2,13 @@
 include "partials/header.php";
 require_once("config/config.php");
 include "databaseQueries/databaseQueries.php";
-if (isset($_POST["semestre"])&&isset($_POST["roomId"])){
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["semestre"])&&isset($_POST["roomId"])){
     $semestre =$_POST["semestre"];
     $roomId= $_POST["roomId"];
-    //echo'vybrali ste rozvrh pre miestnosť s id '.$roomId.' v semestry '.$semestre.'';
+    $days=["pondelok","utorok","streda","štvrtok","piatok"];
+    $selectedRoom=selectRoomById($conn,$roomId);
+    if ($selectedRoom)
+        echo '<h2 class="purple">Rozvrh pre '.mysqli_fetch_assoc($selectedRoom)["name"].' v '.$semestre.'</h2>';
     echo '<table class="tabulka"><thead>
         <tr>
             <td>Deň/čas</td>
@@ -31,27 +34,49 @@ if (isset($_POST["semestre"])&&isset($_POST["roomId"])){
         </tr>
         </thead>
         <tbody>';
-    echo '<tr>
-            <td class="dni_tabulky">Po</td>   
-            <td colspan="19"></td>         
-        </tr>';
-    echo '<tr>
-            <td class="dni_tabulky">Ut</td> 
-            <td colspan="19"></td>           
-        </tr>';
-    echo '<tr>
-            <td class="dni_tabulky">St</td>  
-            <td colspan="19"></td>            
-        </tr>';
-    echo '<tr>
-            <td class="dni_tabulky">Št</td> 
-            <td colspan="19"></td>             
-        </tr>';
-    echo '<tr>
-            <td class="dni_tabulky">Pi</td> 
-            <td colspan="19"></td>             
-        </tr>';
+    foreach ($days as $day){
+        $selected = selectSubjectsByRoomDay($conn,$roomId,$semestre,$day);
+        if ($selected) {
+            $hour=5;
+            echo '<tr>
+                    <td class="day">'.mb_substr($day, 0,2,"utf-8").'</td>';
+            if (($selected->num_rows)==0)
+                echo '<td colspan="19"></td>';
+            else {
+                while ($subject = mysqli_fetch_assoc($selected)) {
+                    $name=$subject["name"];
+                    $roomName=$subject["room_name"];
+                    $type=$subject["type"];
+                    $timeFrom=intval($subject["time_from"]);
+                    $timeTo=intval($subject["time_to"]);
+                    $selectedTeachers = selectTeachersBySubject($conn,$subject["id"]);
+                    $teachers='';
+                    if ($selectedTeachers) {
+                        $x=0;
+                        while ($teacher = mysqli_fetch_assoc($selectedTeachers)){
+                            if ($x!==0)
+                                $teachers.=", ";
+                            $x=1;
+                            $teachers.=$teacher["name"];
+                        }
+                    }
+
+                    //miesto medzi prednáškami/cvičeniami
+                    $diffFrom=$timeFrom-$hour;
+                    if ($diffFrom>0)
+                        echo '<td colspan="'.$diffFrom.'"></td>';
+                    //prednáška/cvičenie
+                    $diffFromTo = $timeTo - $timeFrom;
+                    echo '<td class="'.$type.'" colspan="'.$diffFromTo.'">'.$roomName.' <br> '.$name.' <br> '.$teachers.'</td>';
+                    $hour=$hour+$diffFrom+$diffFromTo;
+                }
+
+            }
+        }
+    }
     echo '</tbody></table>';
+    echo '<div class="legend"> <h4 class="purple">Legenda k rozvrhu: </h4>';
+    echo '<span class="legend_item lecture">Prednáška</span><span class="legend_item exercise">Cvičenie</span></div>';
 }
 else {
     echo '<form class="form" action="roomSchedule.php" method="post" enctype="multipart/form-data" name = "getSchedule">

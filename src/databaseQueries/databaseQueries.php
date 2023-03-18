@@ -92,6 +92,59 @@ function selectSubjectByStudyGradeYearSemestre ($conn,$study,$grade,$year,$semes
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
+function selectSubjectsByStudyGradeYearSemestreDay ($conn,$study,$grade,$year,$semestre,$day){
+    $subjects = "SELECT Subjects.id,Subjects.name,Rooms.name as 'room_name', 'lecture' as 'type',
+                Subjects.lecture_day as 'day',HOUR(Subjects.lecture_time_from) as 'time_from',HOUR(Subjects.lecture_time_to) as 'time_to'           
+                FROM Subjects JOIN SubjectFieldOfStudies ON Subjects.id=SubjectFieldOfStudies.subject_id 
+                JOIN fieldsOfStudy ON SubjectFieldOfStudies.fieldOfStudy_id=fieldsOfStudy.id
+                JOIN Rooms ON Rooms.id=Subjects.lecture_room_id
+                where fieldsOfStudy.id='".$study."' and Subjects.grade='".$grade ."' and Subjects.year='".$year."' 
+                and Subjects.semestre='".$semestre."' and lecture_day ='".$day."'
+                UNION
+                SELECT Subjects.id,Subjects.name,Rooms.name as 'room_name','exercise' as 'type',
+                Subjects.exercise_day as 'day',HOUR(Subjects.exercise_time_from) as 'time_from',HOUR(Subjects.exercise_time_to) as 'time_to'           
+                FROM Subjects JOIN SubjectFieldOfStudies ON Subjects.id=SubjectFieldOfStudies.subject_id 
+                JOIN fieldsOfStudy ON SubjectFieldOfStudies.fieldOfStudy_id=fieldsOfStudy.id
+                JOIN Rooms ON Rooms.id=Subjects.exercise_room_id
+                where fieldsOfStudy.id='".$study."' and Subjects.grade='".$grade ."' and Subjects.year='".$year."' 
+                and Subjects.semestre='".$semestre."' and exercise_day ='".$day."'
+                ORDER BY 'time_from' ASC";
+    $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+function selectSubjectsByTeacherDay ($conn,$teacherId,$semestre,$day){
+    $subjects = "SELECT Subjects.id,Subjects.name,Rooms.name as 'room_name', 'lecture' as 'type',
+                Subjects.lecture_day as 'day',HOUR(Subjects.lecture_time_from) as 'time_from',HOUR(Subjects.lecture_time_to) as 'time_to'           
+                FROM Subjects JOIN SubjectTeachers ON Subjects.id=SubjectTeachers.subject_id 
+                JOIN Teachers ON Teachers.id=SubjectTeachers.teacher_id
+                JOIN Rooms ON Rooms.id=Subjects.lecture_room_id
+                where Teachers.id='".$teacherId."' and Subjects.semestre='".$semestre."' and lecture_day ='".$day."'
+                UNION
+                SELECT Subjects.id,Subjects.name,Rooms.name as 'room_name','exercise' as 'type',
+                Subjects.exercise_day as 'day',HOUR(Subjects.exercise_time_from) as 'time_from',HOUR(Subjects.exercise_time_to) as 'time_to'           
+                FROM Subjects JOIN SubjectTeachers ON Subjects.id=SubjectTeachers.subject_id 
+                JOIN Teachers ON Teachers.id=SubjectTeachers.teacher_id
+                JOIN Rooms ON Rooms.id=Subjects.exercise_room_id
+                where Teachers.id='".$teacherId."' and Subjects.semestre='".$semestre."' and exercise_day ='".$day."'
+                ORDER BY 'time_from' ASC";
+    $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+function selectSubjectsByRoomDay ($conn,$roomId,$semestre,$day){
+    $subjects = "SELECT Subjects.id,Subjects.name,Rooms.name as 'room_name', 'lecture' as 'type',
+                Subjects.lecture_day as 'day',HOUR(Subjects.lecture_time_from) as 'time_from',HOUR(Subjects.lecture_time_to) as 'time_to'           
+                FROM Subjects JOIN Rooms ON Rooms.id=Subjects.lecture_room_id
+                where Rooms.id='".$roomId."' and Subjects.semestre='".$semestre."' and lecture_day ='".$day."'
+                UNION
+                SELECT Subjects.id,Subjects.name,Rooms.name as 'room_name','exercise' as 'type',
+                Subjects.exercise_day as 'day',HOUR(Subjects.exercise_time_from) as 'time_from',HOUR(Subjects.exercise_time_to) as 'time_to'           
+                FROM Subjects JOIN Rooms ON Rooms.id=Subjects.exercise_room_id
+                where Rooms.id='".$roomId."' and Subjects.semestre='".$semestre."' and lecture_day ='".$day."'
+                ORDER BY 'time_from' ASC";
+    $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+
 function selectSubjectById ($conn,$id){
     $subject = "SELECT * FROM Subjects where id='".$id."'";
     $result = $conn->query($subject) or die("Chyba pri vykonaní query: " . $conn->error);
@@ -109,6 +162,12 @@ function selectTeachersBySubject ($conn,$subjectId){
     $result = $conn->query($teachers) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
+function selectTeacherById ($conn,$id){
+    $teachers = "SELECT name FROM Teachers  
+                WHERE id='".$id."'";
+    $result = $conn->query($teachers) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
 function selectTeachersBySubjectAndTeacherID ($conn,$subjectId,$teacherId){
     $teachers = "SELECT Teachers.id,Teachers.name FROM Teachers 
                 JOIN SubjectTeachers ON Teachers.id=SubjectTeachers.teacher_id 
@@ -122,6 +181,12 @@ function selectFieldOfStudyBySubjectId($conn, $subjectId){
     $result = $conn->query($fieldOfStudies) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
+function selectFieldOfStudyById($conn, $id){
+    $fieldOfStudies = "SELECT name FROM fieldsOfStudy            
+                 WHERE id='".$id."'";
+    $result = $conn->query($fieldOfStudies) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
 function selectTeacherConstraints ($conn,$teacherId){
     $subject = "SELECT * FROM TeacherConstraints where teacher_id='".$teacherId."'";
     $result = $conn->query($subject) or die("Chyba pri vykonaní query: " . $conn->error);
@@ -129,7 +194,7 @@ function selectTeacherConstraints ($conn,$teacherId){
 }
 
 //kontrola obmedzeni
-//by fieldOfStudy semestre lectures
+//podľa fieldOfStudy semestra prednášok
 function checkSubjectLecturesInFieldOfStudyConstraint($conn,$subjectId,$fieldOfStudyId,$grade,$year,$semestre,$lectureDay,$exerciseDay,
                                                      $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
@@ -156,7 +221,7 @@ function checkSubjectLecturesInFieldOfStudyConstraint($conn,$subjectId,$fieldOfS
 
 }
 
-//by fieldOfStudy semestre exercises
+//podľa fieldOfStudy semestra cvičení
 function checkSubjectExercisesInFieldOfStudyConstraint($conn,$subjectId,$fieldOfStudyId,$grade,$year,$semestre,$lectureDay,$exerciseDay,
                                                      $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
@@ -181,7 +246,7 @@ function checkSubjectExercisesInFieldOfStudyConstraint($conn,$subjectId,$fieldOf
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
-//by room lectures
+//podľa prednášok v miestnosti
 function checkSubjectLecturesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$lectureDay,
                                                       $fromLecture,$toLecture)
 {
@@ -196,7 +261,7 @@ function checkSubjectLecturesInRoomConstraint($conn,$subjectId,$semestre,$roomId
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
-//by room exercises
+//podľa cvičení v miestnosti
 function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$exerciseDay
                                                        ,$fromExercise,$toExercise)
 {
@@ -212,7 +277,7 @@ function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomI
     return $result;
 }
 
-//by teacher lectures
+//podľa prednášok učiteľa
 function checkSubjectLecturesByTeacherConstraint($conn,$subjectId,$semestre,$teacherId,$lectureDay,$exerciseDay,
                                               $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
@@ -237,7 +302,7 @@ function checkSubjectLecturesByTeacherConstraint($conn,$subjectId,$semestre,$tea
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
-//by teacher exercises
+//podľa cvičení učiteľa
 function checkSubjectExercisesByTeacherConstraint($conn,$subjectId,$semestre,$teacherId,$lectureDay,$exerciseDay,
                                                $fromLecture,$toLecture,$fromExercise,$toExercise)
 {
@@ -263,7 +328,7 @@ function checkSubjectExercisesByTeacherConstraint($conn,$subjectId,$semestre,$te
     return $result;
 }
 
-//by teacher selected constraints
+//podľa vlastných obmedzení učiteľa
 function checkTeacherCustomConstraint($conn,$teacherId,$lectureDay,$exerciseDay,
                                                   $fromLecture,$toLecture,$fromExercise,$toExercise)
 {

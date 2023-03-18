@@ -4,6 +4,7 @@ require_once("config/config.php");
 include "databaseQueries/databaseQueries.php";
     if ((isset($_GET["type"]))) {
         $days=["pondelok","utorok","streda","štvrtok","piatok"];
+        //fieldOfStudy
         if ($_GET["type"]==0)
             echo '<form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "0">
@@ -13,6 +14,7 @@ include "databaseQueries/databaseQueries.php";
                     </div>
                         <button type="submit" class="btn btn-primary">Vložiť odbor</button>
                 </form>';
+        //teacher
         else if ($_GET["type"]==1)
             echo '<form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "1">
@@ -22,6 +24,7 @@ include "databaseQueries/databaseQueries.php";
                     </div>
                     <button type="submit" class="btn btn-primary">Vložiť učiteľa</button>
                 </form>';
+        //room
         else if ($_GET["type"]==2)
             echo '<form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "2">
@@ -33,6 +36,7 @@ include "databaseQueries/databaseQueries.php";
                     </div>
                     <button type="submit" class="btn btn-primary">Vložiť miestnosť</button>
                 </form>';
+        //subject
         else if ($_GET["type"]==3){
             echo '<form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "3">
@@ -73,6 +77,7 @@ include "databaseQueries/databaseQueries.php";
                         <button type="submit" class="btn btn-primary">Vložiť predmet</button>
                     </form>';
         }
+        //obmedzenie
         else if ($_GET["type"]==4){
             echo '<form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "4">
