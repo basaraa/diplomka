@@ -13,23 +13,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["semestre"])&&isset($_P
         <tr>
             <td>Deň/čas</td>
             <td>5:00-5:50</td>
+            <td class="empty">   </td>
             <td>6:00-6:50</td>
+            <td class="empty">   </td>
             <td>7:00-7:50</td>
+            <td class="empty">   </td>
             <td>8:00-8:50</td>
+            <td class="empty">   </td>
             <td>9:00-9:50</td>
+            <td class="empty">   </td>
             <td>10:00-10:50</td>
+            <td class="empty">   </td>
             <td>11:00-11:50</td>
+            <td class="empty">   </td>
             <td>12:00-12:50</td>
+            <td class="empty">   </td>
             <td>13:00-13:50</td>
+            <td class="empty">   </td>
             <td>14:00-14:50</td>
+            <td class="empty">   </td>
             <td>15:00-15:50</td>
+            <td class="empty">   </td>
             <td>16:00-16:50</td>
+            <td class="empty">   </td>
             <td>17:00-17:50</td>
+            <td class="empty">   </td>
             <td>18:00-18:50</td>
+            <td class="empty">   </td>
             <td>19:00-19:50</td>
+            <td class="empty">   </td>
             <td>20:00-20:50</td>
+            <td class="empty">   </td>
             <td>21:00-21:50</td>
+            <td class="empty">   </td>
             <td>22:00-22:50</td>
+            <td class="empty">   </td>
             <td>23:00-23:50</td>
         </tr>
         </thead>
@@ -40,9 +58,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["semestre"])&&isset($_P
             $hour=5;
             echo '<tr>
                     <td class="day">'.mb_substr($day, 0,2,"utf-8").'</td>';
-            if (($selected->num_rows)==0)
-                echo '<td colspan="19"></td>';
+            if (($selected->num_rows)==0){
+                $hours=37;
+                echo '<td colspan="37"></td>';
+            }
             else {
+                $y=0;
                 while ($subject = mysqli_fetch_assoc($selected)) {
                     $name=$subject["name"];
                     $roomName=$subject["room_name"];
@@ -63,16 +84,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["semestre"])&&isset($_P
 
                     //miesto medzi prednáškami/cvičeniami
                     $diffFrom=$timeFrom-$hour;
-                    if ($diffFrom>0)
-                        echo '<td colspan="'.$diffFrom.'"></td>';
+                    echo '<td colspan="'.($diffFrom*2+$y).'"></td>';
                     //prednáška/cvičenie
                     $diffFromTo = $timeTo - $timeFrom;
-                    echo '<td class="'.$type.'" colspan="'.$diffFromTo.'">'.$roomName.' <br> '.$name.' <br> '.$teachers.'</td>';
-                    $hour=$hour+$diffFrom+$diffFromTo;
+                    echo '<td class="'.$type.'" colspan="'.($diffFromTo*2+1).'">'.$roomName.' <br> '.$name.' <br> '.$teachers.'</td>';
+                    $hour=$hour+$diffFrom+$diffFromTo+1;
+                    $y=1;
                 }
-
+                if ($hour <37)
+                    echo '<td colspan="'.(37-$hour+1).'"></td>';
             }
         }
+        echo '</tr>';
     }
     echo '</tbody></table>';
     echo '<div class="legend"> <h4 class="purple">Legenda k rozvrhu: </h4>';

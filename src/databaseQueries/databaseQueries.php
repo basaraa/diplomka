@@ -139,7 +139,7 @@ function selectSubjectsByRoomDay ($conn,$roomId,$semestre,$day){
                 SELECT Subjects.id,Subjects.name,Rooms.name as 'room_name','exercise' as 'type',
                 Subjects.exercise_day as 'day',HOUR(Subjects.exercise_time_from) as 'time_from',HOUR(Subjects.exercise_time_to) as 'time_to'           
                 FROM Subjects JOIN Rooms ON Rooms.id=Subjects.exercise_room_id
-                where Rooms.id='".$roomId."' and Subjects.semestre='".$semestre."' and lecture_day ='".$day."'
+                where Rooms.id='".$roomId."' and Subjects.semestre='".$semestre."' and exercise_day ='".$day."'
                 ORDER BY 'time_from' ASC";
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;

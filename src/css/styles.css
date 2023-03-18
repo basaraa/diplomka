@@ -148,6 +148,8 @@ p{
 
 .tabulka td{
     border: solid black 1px;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 .tabulka thead{
@@ -155,6 +157,9 @@ p{
     background-color:lightgray;
     color:red;
     border: solid black 1px;
+}
+.empty{
+    width:10px;
 }
 
 .tabulka tbody{
