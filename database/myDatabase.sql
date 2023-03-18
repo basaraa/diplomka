@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hostiteľ: db
--- Čas generovania: So 11.Mar 2023, 10:25
+-- Čas generovania: So 18.Mar 2023, 09:08
 -- Verzia serveru: 8.0.32
 -- Verzia PHP: 8.0.19
 
@@ -40,8 +40,7 @@ CREATE TABLE `fieldsOfStudy` (
 
 CREATE TABLE `Rooms` (
   `id` int UNSIGNED NOT NULL,
-  `name` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
-  `room_type` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
+  `name` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
@@ -64,7 +63,8 @@ CREATE TABLE `SubjectFieldOfStudies` (
 
 CREATE TABLE `Subjects` (
   `id` int UNSIGNED NOT NULL,
-  `room_id` int UNSIGNED DEFAULT NULL,
+  `lecture_room_id` int UNSIGNED DEFAULT NULL,
+  `exercise_room_id` int UNSIGNED DEFAULT NULL,
   `name` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `shortcut` varchar(8) NOT NULL,
   `grade` enum('bc.','ing.','phd.') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
@@ -144,7 +144,8 @@ ALTER TABLE `SubjectFieldOfStudies`
 --
 ALTER TABLE `Subjects`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `room_id` (`room_id`);
+  ADD KEY `room_id` (`lecture_room_id`),
+  ADD KEY `exercise_room_id` (`exercise_room_id`);
 
 --
 -- Indexy pre tabuľku `SubjectTeachers`
@@ -228,7 +229,8 @@ ALTER TABLE `SubjectFieldOfStudies`
 -- Obmedzenie pre tabuľku `Subjects`
 --
 ALTER TABLE `Subjects`
-  ADD CONSTRAINT `Subjects_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `Rooms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `Subjects_ibfk_2` FOREIGN KEY (`lecture_room_id`) REFERENCES `Rooms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `Subjects_ibfk_3` FOREIGN KEY (`exercise_room_id`) REFERENCES `Rooms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Obmedzenie pre tabuľku `SubjectTeachers`
