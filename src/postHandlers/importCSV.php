@@ -17,59 +17,67 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         $result=null;
                         //odbor
                         if ($type==0){
-                            $name=$line[0];
-                            $shortcut=$line[1];
-                            $checkFoS= selectFieldOfStudyByName ($conn,$name);
-                            if ($checkFoS && ($checkFoS->num_rows)===0) {
-                                if ($name != '' && $shortcut != '' && (!(isset($line[2]))))
-                                    $result = insertFieldsOfStudy($conn, $name, $shortcut);
+                            if (isset ($line[0]) && isset ($line[1])){
+                                $name=$line[0];
+                                $shortcut=$line[1];
+                                $checkFoS= selectFieldOfStudyByName ($conn,$name);
+                                if ($checkFoS && ($checkFoS->num_rows)===0) {
+                                    if ($name != '' && $shortcut != '' && (!(isset($line[2]))))
+                                        $result = insertFieldsOfStudy($conn, $name, $shortcut);
+                                }
                             }
                         }
                         //učiteľ
                         else if ($type==1){
-                            $name=$line[0];
-                            $checkTeacher= selectTeacherByName ($conn,$name);
-                            if ($checkTeacher && ($checkTeacher->num_rows)===0) {
-                                if ($name != '' && (!(isset($line[1]))))
-                                    $result = insertTeacher($conn, $name);
+                            if (isset ($line[0])) {
+                                $name = $line[0];
+                                $checkTeacher = selectTeacherByName($conn, $name);
+                                if ($checkTeacher && ($checkTeacher->num_rows) === 0) {
+                                    if ($name != '' && (!(isset($line[1]))))
+                                        $result = insertTeacher($conn, $name);
+                                }
                             }
                         }
                         //miestnosť
                         else if ($type==2){
-                            $name=$line[0];
-                            $checkRoom= selectRoomByName ($conn,$name);
-                            if ($checkRoom && ($checkRoom->num_rows)===0) {
-                                if ($name != '' && (!(isset($line[1]))))
-                                    $result = insertRoom($conn, $name);
+                            if (isset ($line[0])) {
+                                $name = $line[0];
+                                $checkRoom = selectRoomByName($conn, $name);
+                                if ($checkRoom && ($checkRoom->num_rows) === 0) {
+                                    if ($name != '' && (!(isset($line[1]))))
+                                        $result = insertRoom($conn, $name);
+                                }
                             }
                         }
                         //obmedzenie
                         else {
-                            $teacher=$line[0];
-                            $day=$line[1];
-                            $ok=1;
-                            $name='';
-                            $from=$line[2];
-                            if ($from!='')
-                                if (DateTime::createFromFormat('H:i', $from) === false)
-                                    $ok=0;
-                            $to=$line[3];
-                            if ($to!='')
-                                if (DateTime::createFromFormat('H:i', $to) === false)
-                                    $ok=0;
-                            if ($to=='')
-                                $to="23:59";
-                            if ($from=='')
-                                $from="00:00";
-                            if ((($day!='' && in_array($day,$days)) || $day=='') &&
-                                $teacher!='' && $ok==1 && (!(isset($line[4])))){
-                                $selectedTeacher=selectTeacherByName($conn,$teacher);
-                                if (isset($selectedTeacher)&&!empty($selectedTeacher)){
-                                    $name=$day.' od '.$from.' do '.$to.'<br>';
-                                    if ($day=='')
-                                        $day=0;
-                                    $teacherId=mysqli_fetch_assoc($selectedTeacher)["id"];
-                                    $result= insertTeacherConstraints($conn,$teacherId,$day,$from,$to);
+                            if (isset ($line[0]) && isset ($line[1]) && isset ($line[2]) && isset ($line[3])) {
+                                $teacher = $line[0];
+                                $day = $line[1];
+                                $ok = 1;
+                                $name = '';
+                                $from = $line[2];
+                                if ($from != '')
+                                    if (DateTime::createFromFormat('H:i', $from) === false)
+                                        $ok = 0;
+                                $to = $line[3];
+                                if ($to != '')
+                                    if (DateTime::createFromFormat('H:i', $to) === false)
+                                        $ok = 0;
+                                if ($to == '')
+                                    $to = "23:59";
+                                if ($from == '')
+                                    $from = "00:00";
+                                if ((($day != '' && in_array($day, $days)) || $day == '') &&
+                                    $teacher != '' && $ok == 1 && (!(isset($line[4])))) {
+                                    $selectedTeacher = selectTeacherByName($conn, $teacher);
+                                    if (isset($selectedTeacher) && !empty($selectedTeacher)) {
+                                        $name = $day . ' od ' . $from . ' do ' . $to . '<br>';
+                                        if ($day == '')
+                                            $day = 0;
+                                        $teacherId = mysqli_fetch_assoc($selectedTeacher)["id"];
+                                        $result = insertTeacherConstraints($conn, $teacherId, $day, $from, $to);
+                                    }
                                 }
                             }
                         }
