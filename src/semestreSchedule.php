@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["study"])&& isset($_GET["
     $fieldOfStudyName=selectFieldOfStudyById($conn,$study);
     if ($fieldOfStudyName)
         echo '<h2 class="purple">Rozvrh pre '.mysqli_fetch_assoc($fieldOfStudyName)["name"].' v '.$grade.' štúdiu v '.$year.'.ročníku v '.$semestre.'</h2>';
+
     echo '<table class="tabulka"><thead>
         <tr>
             <td>Deň/čas</td>
@@ -109,10 +110,11 @@ else{
     if ($selected){
         while ($fieldOfStudy=mysqli_fetch_assoc($selected)){
             $name= $fieldOfStudy["name"];
+            $shortcut= $fieldOfStudy["shortcut"];
             $id= $fieldOfStudy["id"];
             echo '<div class="dropdown">
         <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            '.$name.'
+            '.$name.' ('.$shortcut.')
         </button>
         <ul class="dropdown-menu">';
             $fields = ["bc","ing","phd"];

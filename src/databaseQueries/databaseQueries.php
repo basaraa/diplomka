@@ -1,7 +1,7 @@
 <?php
 //insert queries
-function insertFieldsOfStudy ($conn,$name){
-    $studies = "INSERT INTO fieldsOfStudy (name) VALUES ('$name')";
+function insertFieldsOfStudy ($conn,$name,$shortcut){
+    $studies = "INSERT INTO fieldsOfStudy (name,shortcut) VALUES ('$name','$shortcut')";
     $result = $conn->query($studies) or die("Chyba pri vykonaní insert query: " . $conn->error);
     return $result;
 }
@@ -63,7 +63,7 @@ function deleteSubjectTeachersByFieldOfStudies($conn,$id){
 }
 //select queries
 function selectAllFieldsOfStudy ($conn){
-    $studies = "SELECT id,name FROM fieldsOfStudy order by name ASC";
+    $studies = "SELECT * FROM fieldsOfStudy order by name ASC";
     $result = $conn->query($studies) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
@@ -165,6 +165,12 @@ function selectTeachersBySubject ($conn,$subjectId){
 function selectTeacherById ($conn,$id){
     $teachers = "SELECT name FROM Teachers  
                 WHERE id='".$id."'";
+    $result = $conn->query($teachers) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+function selectTeacherByName($conn,$name){
+    $teachers = "SELECT id FROM Teachers  
+                WHERE name='".$name."' limit 1";
     $result = $conn->query($teachers) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }

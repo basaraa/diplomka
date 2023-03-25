@@ -4,17 +4,21 @@ require_once("config/config.php");
 include "databaseQueries/databaseQueries.php";
     if ((isset($_GET["type"]))) {
         $days=["pondelok","utorok","streda","štvrtok","piatok"];
-        //fieldOfStudy
+        //odbor
         if ($_GET["type"]==0)
-            echo '<form class="form addForm">                   
+            echo ' <h3>Vložiť manuálne:</h3>
+                    <form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "0">
                     <div class="form-group">                 
                         <label for="name">Názov odboru:</label>
                         <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte názov odboru" required>
+                        <label for="name">Skratka odboru:</label>
+                        <input type="text" class="form-control" name= "shortcut" id="shortcut" placeholder="Zadajte skratku odboru" required>
                     </div>
                         <button type="submit" class="btn btn-primary">Vložiť odbor</button>
-                </form>';
-        //teacher
+                </form>              
+                ';
+        //učiteľ
         else if ($_GET["type"]==1)
             echo '<form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "1">
@@ -24,19 +28,17 @@ include "databaseQueries/databaseQueries.php";
                     </div>
                     <button type="submit" class="btn btn-primary">Vložiť učiteľa</button>
                 </form>';
-        //room
+        //miestnosť
         else if ($_GET["type"]==2)
             echo '<form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "2">
                     <div class="form-group">
                         <label for="name">Názov miestnosti:</label>
                         <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte názov miestnosti" required>
-                        <label for="name">Typ miestnosti:</label>
-                        <input type="text" class="form-control" name= "roomType" id="roomType" placeholder="Zadajte typ miestnosti" required>
-                    </div>
+                        </div>
                     <button type="submit" class="btn btn-primary">Vložiť miestnosť</button>
                 </form>';
-        //subject
+        //predmet
         else if ($_GET["type"]==3){
             echo '<form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "3">
@@ -106,6 +108,18 @@ include "databaseQueries/databaseQueries.php";
         }
         else
             echo "<h1>Nesprávne navštívenie stránky</h1>";
+        $types=array (0,1,2,4);
+        if (in_array ($_GET["type"],$types))
+            echo '<h3 class="csvImporth">Vložiť z .csv súboru:</h3>
+                <form class="form addFormCSV" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="type" name="type" value = "'.$_GET["type"].'">
+                <div class="form-group">
+                <label for="fileCSV">Názov súboru:</label>
+                        <input type="file" class="form-control" name= "fileCSV" id="fileCSV" required>
+                        
+                </div>
+                        <button type="submit" class="btn btn-primary">Vložiť zo súboru</button>
+                </form>';
     }
     else
         echo "<h1>Nesprávne navštívenie stránky</h1>";
@@ -113,10 +127,17 @@ include "databaseQueries/databaseQueries.php";
 
 ?>
     <div id="modal_background"></div>
+    <div class="modal_div2">
+        <div id="modal_vrstva2">
+            <div id="modal_text2"></div>
+            <button class="btn btn-primary" onclick="window.location.href='index.php'">Späť na hlavnú stránku</button>
+        </div>
+    </div>
+    <div id="modal_background2"></div>
     <div class="modal_div">
         <div id="modal_vrstva">
-            <h1 id="success_insert">Úspešne pridanie do databázy</h1>
-            <button class="btn btn-primary" onclick="window.location.href='index.php'">Späť na hlavnú stránku</button>
+            <div id="modal_text"></div>
+            <button class="btn btn-primary" onclick="go_back();">Vrátiť sa späť</button>
         </div>
     </div>
 

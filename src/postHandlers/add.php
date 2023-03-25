@@ -5,11 +5,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     //field of study
     if (isset($_POST["type"])){
         if ($_POST["type"]==0){
-            if (isset($_POST["name"])){
+            if (isset($_POST["name"]) && isset($_POST["shortcut"])){
                 $name = $_POST["name"];
-                $result = insertFieldsOfStudy($conn,$name);
-                if($result)
-                {
+                $shortcut = $_POST["shortcut"];
+                $result = insertFieldsOfStudy($conn,$name,$shortcut);
+                if($result){
                     echo 1;
                 }
                 else http_response_code(400);
@@ -21,8 +21,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             if (isset($_POST["name"])){
                 $name = $_POST["name"];
                 $result = insertTeacher($conn,$name);
-                if($result)
-                {
+                if($result){
                     echo 1;
                 }
                 else http_response_code(400);
@@ -34,8 +33,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             if (isset($_POST["name"])){
                 $name = $_POST["name"];
                 $result = insertRoom($conn,$name);
-                if($result)
-                {
+                if($result){
                     echo 1;
                 }
                 else http_response_code(400);
@@ -74,9 +72,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 $to=$_POST["To"];
                 if ($to=='')
                     $to="23:59";
+                if ($from=='')
+                    $to="00:00";
                 $result = insertTeacherConstraints($conn,$teacherId,$day,$from,$to);
-                if($result)
-                {
+                if($result){
                     echo 1;
                 }
                 else http_response_code(400);
@@ -88,3 +87,4 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     else
         http_response_code(400);
 }
+?>

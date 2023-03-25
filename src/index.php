@@ -7,10 +7,11 @@ $selected = selectAllFieldsOfStudy($link);
 if ($selected){
     while ($fieldOfStudy=mysqli_fetch_assoc($selected)){
         $name= $fieldOfStudy["name"];
+        $shortcut= $fieldOfStudy["shortcut"];
         $id= $fieldOfStudy["id"];
         echo '<div class="dropdown">
     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        '.$name.'
+        '.$name.' ('.$shortcut.')
     </button>
     <ul class="dropdown-menu">';
         $fields = ["bc","ing","phd"];

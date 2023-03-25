@@ -9,6 +9,7 @@ $(function () {
             success: function () {
                 document.getElementById("modal_background").style.display="block";
                 document.getElementsByClassName("modal_div")[0].style.display="flex";
+                document.getElementById("modal_text").innerHTML="Úspešne pridanie do databázy";
             },
             error: function (){
                 alert ("Nastala chyba skúste to znova")
@@ -16,7 +17,40 @@ $(function () {
         });
     })
 });
-
+$(function () {
+    $('.addFormCSV').submit( function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'post',
+            url: 'postHandlers/importCSV.php',
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData:false,
+            success: function (data) {
+                try {
+                    let result = JSON.parse(data)
+                    if(result.scs===true){
+                        document.getElementById("modal_background2").style.display="block";
+                        document.getElementsByClassName("modal_div2")[0].style.display="flex";
+                        document.getElementById("modal_text2").innerHTML=result.msg;
+                    }
+                    else{
+                        document.getElementById("modal_background").style.display="block";
+                        document.getElementsByClassName("modal_div")[0].style.display="flex";
+                        document.getElementById("modal_text").innerHTML=result.msg;
+                    }
+                }
+                catch{
+                    alert (data)
+                }
+            },
+            error: function (){
+                alert ("Nastala chyba skúste to znova")
+            }
+        });
+    })
+});
 //delete
 $(function () {
     $('.deleteForm').on('submit', function (e) {
