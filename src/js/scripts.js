@@ -6,10 +6,23 @@ $(function () {
             type: 'post',
             url: 'postHandlers/add.php',
             data: $('.addForm').serialize(),
-            success: function () {
-                document.getElementById("modal_background").style.display="block";
-                document.getElementsByClassName("modal_div")[0].style.display="flex";
-                document.getElementById("modal_text").innerHTML="Úspešne pridanie do databázy";
+            success: function (data) {
+                try {
+                    let result = JSON.parse(data)
+                    if(result.scs===true){
+                        document.getElementById("modal_background2").style.display="block";
+                        document.getElementsByClassName("modal_div2")[0].style.display="flex";
+                        document.getElementById("modal_text2").innerHTML=result.msg;
+                    }
+                    else{
+                        document.getElementById("modal_background").style.display="block";
+                        document.getElementsByClassName("modal_div")[0].style.display="flex";
+                        document.getElementById("modal_text").innerHTML=result.msg;
+                    }
+                }
+                catch{
+                    alert (data)
+                }
             },
             error: function (){
                 alert ("Nastala chyba skúste to znova")
@@ -83,7 +96,7 @@ $(function () {
                     let result = JSON.parse(data)
                     if(result.scs===false){
                         let FOSConstraint = result.FOSerr ? ("Zoznam kolízii pri štúdijnom odbore v ročníku v semestri pri predmetoch: "+result.FOSerr+"<br>") : '';
-                        let RoomConstraint = result.RoomErr ? ("Zoznam kolízii v miestnostiach pri predmetoch: "+result.RoomErr+"<br>") : '';
+                        let RoomConstraint = result.RoomErr ? ("Zoznam kolízii v miestnostiach pri predmetoch (miestnosť:predmet): "+result.RoomErr+"<br>") : '';
                         let TeacherConstraint = result.TeacherErr ? ("Zoznam kolízii pri učiteľoch pri predmetoch (učiteľ:predmet): "+result.TeacherErr+"<br>") : '';
                         let TeacherCustomConstraint = result.TeacherCustomErr ? ("Zoznam kolízii pri učiteľoch pri ich osobných obmedzeniach (učiteľ:obmedzenie): "+result.TeacherCustomErr+"<br>") : '';
                         document.getElementById("modal_background3").style.display="block";

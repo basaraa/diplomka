@@ -8,11 +8,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             if (isset($_POST["name"]) && isset($_POST["shortcut"])){
                 $name = $_POST["name"];
                 $shortcut = $_POST["shortcut"];
-                $result = insertFieldsOfStudy($conn,$name,$shortcut);
-                if($result){
-                    echo 1;
+                $checkFoS= selectFieldOfStudyByName ($conn,$name);
+                if ($checkFoS && ($checkFoS->num_rows)===0){
+                    $result = insertFieldsOfStudy($conn,$name,$shortcut);
+                    if($result){
+                        echo json_encode(["scs" => true,"msg" => '<h2 class="blue">Úspešne pridaný štúdijný odbor: '.$name.'</h2>']);
+                    }
+                    else http_response_code(400);
                 }
-                else http_response_code(400);
+                else
+                    echo json_encode(["scs" => false,"msg" => '<h2 class="red">Štúdijný odbor s názvom: '.$name.' už existuje</h2>']);
             }
             else http_response_code(400);
         }
@@ -20,11 +25,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         else if ($_POST["type"]==1){
             if (isset($_POST["name"])){
                 $name = $_POST["name"];
-                $result = insertTeacher($conn,$name);
-                if($result){
-                    echo 1;
+                $checkTeacher= selectTeacherByName ($conn,$name);
+                if ($checkTeacher && ($checkTeacher->num_rows)===0){
+                    $result = insertTeacher($conn,$name);
+                    if($result){
+                        echo json_encode(["scs" => true,"msg" => '<h2 class="blue">Úspešne pridaný učiteľ: '.$name.'</h2>']);
+                    }
+                    else http_response_code(400);
                 }
-                else http_response_code(400);
+                else
+                    echo json_encode(["scs" => false,"msg" => '<h2 class="red">Účiteľ s menom: '.$name.' už existuje</h2>']);
             }
             else http_response_code(400);
         }
@@ -32,11 +42,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         else if ($_POST["type"]==2){
             if (isset($_POST["name"])){
                 $name = $_POST["name"];
-                $result = insertRoom($conn,$name);
-                if($result){
-                    echo 1;
+                $checkRoom= selectRoomByName ($conn,$name);
+                if ($checkRoom && ($checkRoom->num_rows)===0){
+                    $result = insertRoom($conn,$name);
+                    if($result){
+                        echo json_encode(["scs" => true,"msg" => '<h2 class="blue">Úspešne pridaná miestnosť: '.$name.'</h2>']);
+                    }
+                    else http_response_code(400);
                 }
-                else http_response_code(400);
+                else
+                    echo json_encode(["scs" => false,"msg" => '<h2 class="red">Miestnosť s názvom: '.$name.' už existuje</h2>']);
             }
             else http_response_code(400);
         }
@@ -50,16 +65,21 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 $semestre = $_POST["semestre"];
                 $fieldOfStudies = $_POST["fieldOfStudies"];
                 $subject = insertSubject($name,$shortcut,$grade,$year,$semestre);
-                $result = $conn->query($subject) or die("Chyba pri vykonaní insert query: " . $conn->error);
-                if (!$result) http_response_code(400);
-                else {
-                    $subjectId=$conn->insert_id;
-                    foreach ($fieldOfStudies as $fieldOfStudyId){
-                        $result = insertSubjectFieldOfStudies($conn,$subjectId,$fieldOfStudyId);
-                        if (!$result) http_response_code(400);
+                $checkSubject= selectSubjectByName ($conn,$name);
+                if ($checkSubject && ($checkSubject->num_rows)===0){
+                    $result = $conn->query($subject) or die("Chyba pri vykonaní insert query: " . $conn->error);
+                    if (!$result) http_response_code(400);
+                    else {
+                        $subjectId=$conn->insert_id;
+                        foreach ($fieldOfStudies as $fieldOfStudyId){
+                            $result = insertSubjectFieldOfStudies($conn,$subjectId,$fieldOfStudyId);
+                            if (!$result) http_response_code(400);
+                        }
+                        echo json_encode(["scs" => true,"msg" => '<h2 class="blue">Úspešne pridaný predmet s názvom: '.$name.'</h2>']);
                     }
-                    echo '1';
                 }
+                else
+                    echo json_encode(["scs" => false,"msg" => '<h2 class="red">Predmet s názvom: '.$name.' už existuje</h2>']);
             }
             else http_response_code(400);
         }
@@ -81,7 +101,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 else http_response_code(400);
             }
             else http_response_code(400);
-
         }
     }
     else

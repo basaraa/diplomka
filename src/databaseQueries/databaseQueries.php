@@ -150,8 +150,18 @@ function selectSubjectById ($conn,$id){
     $result = $conn->query($subject) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
+function selectSubjectByName ($conn,$name){
+    $subject = "SELECT * FROM Subjects where name='".$name."'";
+    $result = $conn->query($subject) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
 function selectRoomById ($conn,$id){
     $room = "SELECT * FROM Rooms where id='".$id."'";
+    $result = $conn->query($room) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+function selectRoomByName ($conn,$name){
+    $room = "SELECT * FROM Rooms where name='".$name."' limit 1";
     $result = $conn->query($room) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
@@ -163,14 +173,12 @@ function selectTeachersBySubject ($conn,$subjectId){
     return $result;
 }
 function selectTeacherById ($conn,$id){
-    $teachers = "SELECT name FROM Teachers  
-                WHERE id='".$id."'";
+    $teachers = "SELECT name FROM Teachers WHERE id='".$id."'";
     $result = $conn->query($teachers) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
 function selectTeacherByName($conn,$name){
-    $teachers = "SELECT id FROM Teachers  
-                WHERE name='".$name."' limit 1";
+    $teachers = "SELECT id FROM Teachers WHERE name='".$name."' limit 1";
     $result = $conn->query($teachers) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
@@ -182,14 +190,17 @@ function selectTeachersBySubjectAndTeacherID ($conn,$subjectId,$teacherId){
     return $result;
 }
 function selectFieldOfStudyBySubjectId($conn, $subjectId){
-    $fieldOfStudies = "SELECT * FROM SubjectFieldOfStudies            
-                 WHERE subject_id='".$subjectId."'";
+    $fieldOfStudies = "SELECT * FROM SubjectFieldOfStudies WHERE subject_id='".$subjectId."'";
     $result = $conn->query($fieldOfStudies) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
 function selectFieldOfStudyById($conn, $id){
-    $fieldOfStudies = "SELECT name FROM fieldsOfStudy            
-                 WHERE id='".$id."'";
+    $fieldOfStudies = "SELECT name FROM fieldsOfStudy WHERE id='".$id."'";
+    $result = $conn->query($fieldOfStudies) or die("Chyba pri vykonaní query: " . $conn->error);
+    return $result;
+}
+function selectFieldOfStudyByName($conn, $name){
+    $fieldOfStudies = "SELECT name FROM fieldsOfStudy WHERE name='".$name."'";
     $result = $conn->query($fieldOfStudies) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
@@ -256,8 +267,9 @@ function checkSubjectExercisesInFieldOfStudyConstraint($conn,$subjectId,$fieldOf
 function checkSubjectLecturesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$lectureDay,
                                                       $fromLecture,$toLecture)
 {
-    $subjects = "SELECT distinct Subjects.id, Subjects.name FROM Subjects        
-                 where id !='".$subjectId."' and semestre = '".$semestre."' and lecture_room_id='".$roomId."'
+    $subjects = "SELECT distinct Subjects.id, Subjects.name, Rooms.name as 'room_name' FROM Subjects    
+                 JOIN Rooms ON Rooms.id = lecture_room_id 
+                 where Subjects.id !='".$subjectId."' and semestre = '".$semestre."' and lecture_room_id='".$roomId."'
                  and lecture_day = '".$lectureDay."' 
                          and ('".$fromLecture."' between lecture_time_from and lecture_time_to
                              or '".$toLecture."' between lecture_time_from and lecture_time_to
@@ -271,8 +283,9 @@ function checkSubjectLecturesInRoomConstraint($conn,$subjectId,$semestre,$roomId
 function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$exerciseDay
                                                        ,$fromExercise,$toExercise)
 {
-    $subjects = "SELECT distinct Subjects.id, Subjects.name FROM Subjects        
-                 where id !='".$subjectId."' and semestre = '".$semestre."' and exercise_room_id='".$roomId."'
+    $subjects = "SELECT distinct Subjects.id, Subjects.name,Rooms.name as 'room_name' FROM Subjects
+                 JOIN Rooms ON Rooms.id = exercise_room_id
+                 where Subjects.id !='".$subjectId."' and semestre = '".$semestre."' and exercise_room_id='".$roomId."'
                  and exercise_day = '" . $exerciseDay . "'
                         and ('".$fromExercise."' between exercise_time_from and exercise_time_to
                              or '" .$toExercise."' between exercise_time_from and exercise_time_to

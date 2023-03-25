@@ -56,11 +56,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             $exerciseFrom,$exerciseTo);
         if (($roomSubjects && ($roomSubjects->num_rows)>0) || ($roomSubjectsE && ($roomSubjectsE->num_rows)>0)){
             while ($subj=mysqli_fetch_assoc($roomSubjects))
-                if(!in_array($subj["name"],$RoomErrorSubjects))
-                    array_push($RoomErrorSubjects,$subj["name"]);
+                if(!in_array(($subj["room_name"].':'.$subj["name"]),$RoomErrorSubjects))
+                    array_push($RoomErrorSubjects,($subj["room_name"].':'.$subj["name"]));
             while ($subjE=mysqli_fetch_assoc($roomSubjectsE))
-                if(!in_array($subjE["name"],$RoomErrorSubjects))
-                    array_push($RoomErrorSubjects,$subjE["name"]);
+                if(!in_array(($subjE["room_name"].':'.$subjE["name"]),$RoomErrorSubjects))
+                    array_push($RoomErrorSubjects,($subjE["room_name"].':'.$subjE["name"]));
             foreach ($RoomErrorSubjects as $subjectName)
                 $RoomErrorMessage.='"'.$subjectName.'",';
         }

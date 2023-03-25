@@ -19,20 +19,29 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         if ($type==0){
                             $name=$line[0];
                             $shortcut=$line[1];
-                            if ($name!='' && $shortcut!='' && (!(isset($line[2]))))
-                                $result = insertFieldsOfStudy($conn,$name,$shortcut);
+                            $checkFoS= selectFieldOfStudyByName ($conn,$name);
+                            if ($checkFoS && ($checkFoS->num_rows)===0) {
+                                if ($name != '' && $shortcut != '' && (!(isset($line[2]))))
+                                    $result = insertFieldsOfStudy($conn, $name, $shortcut);
+                            }
                         }
                         //učiteľ
                         else if ($type==1){
                             $name=$line[0];
-                            if ($name!=''&& (!(isset($line[1]))))
-                                $result = insertTeacher($conn,$name);
+                            $checkTeacher= selectTeacherByName ($conn,$name);
+                            if ($checkTeacher && ($checkTeacher->num_rows)===0) {
+                                if ($name != '' && (!(isset($line[1]))))
+                                    $result = insertTeacher($conn, $name);
+                            }
                         }
                         //miestnosť
                         else if ($type==2){
                             $name=$line[0];
-                            if ($name!='' && (!(isset($line[1]))))
-                                $result = insertRoom($conn,$name);
+                            $checkRoom= selectRoomByName ($conn,$name);
+                            if ($checkRoom && ($checkRoom->num_rows)===0) {
+                                if ($name != '' && (!(isset($line[1]))))
+                                    $result = insertRoom($conn, $name);
+                            }
                         }
                         //obmedzenie
                         else {
@@ -69,17 +78,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                 if ($name!=='')
                                     $msg.=$name;
                             }
-                            else
-                                $msg.=$name.', ';
+                            else {
+                                if ($name !== '')
+                                    $msg .= $name . ', ';
+                            }
                         }
                     }
                 }
                 if (!empty($msg)){
-                    $msg = "Úspešne pridané: ".$msg;
+                    $msg = "<h2 class='blue'>Úspešne pridané: ".$msg."</h2>";
                     echo json_encode(["scs" => true,"msg" => $msg]);
                 }
                 else
-                    echo json_encode(["scs" => false,"msg" => "Súbor nie je csv alebo má nesprávnu štruktúru alebo je prázdny"]);
+                    echo json_encode(["scs" => false,"msg" => "<h2 class='red'>Súbor nie je csv, má nesprávnu štruktúru, je prázdny alebo obsahuje len duplikáty</h2>"]);
             }
             else echo http_response_code(400);
         }
