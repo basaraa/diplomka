@@ -17,7 +17,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         $result=null;
                         //odbor
                         if ($type==0){
-                            if (isset ($line[0]) && isset ($line[1])){
+                            if ((isset ($line[0]) && strlen ($line[0])<=64) && (isset ($line[1]) && strlen ($line[1])<=8)){
                                 $name=$line[0];
                                 $shortcut=$line[1];
                                 $checkFoS= selectFieldOfStudyByName ($conn,$name);
@@ -29,7 +29,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         }
                         //učiteľ
                         else if ($type==1){
-                            if (isset ($line[0])) {
+                            if (isset ($line[0])  && strlen ($line[0])<=64) {
                                 $name = $line[0];
                                 $checkTeacher = selectTeacherByName($conn, $name);
                                 if ($checkTeacher && ($checkTeacher->num_rows) === 0) {
@@ -40,7 +40,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         }
                         //miestnosť
                         else if ($type==2){
-                            if (isset ($line[0])) {
+                            if (isset ($line[0]) && strlen ($line[0])<=32) {
                                 $name = $line[0];
                                 $checkRoom = selectRoomByName($conn, $name);
                                 if ($checkRoom && ($checkRoom->num_rows) === 0) {
@@ -57,26 +57,28 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                 $ok = 1;
                                 $name = '';
                                 $from = $line[2];
-                                if ($from != '')
-                                    if (DateTime::createFromFormat('H:i', $from) === false)
-                                        $ok = 0;
                                 $to = $line[3];
-                                if ($to != '')
-                                    if (DateTime::createFromFormat('H:i', $to) === false)
-                                        $ok = 0;
-                                if ($to == '')
-                                    $to = "23:59";
-                                if ($from == '')
-                                    $from = "00:00";
-                                if ((($day != '' && in_array($day, $days)) || $day == '') &&
-                                    $teacher != '' && $ok == 1 && (!(isset($line[4])))) {
-                                    $selectedTeacher = selectTeacherByName($conn, $teacher);
-                                    if (isset($selectedTeacher) && !empty($selectedTeacher)) {
-                                        $name = $day . ' od ' . $from . ' do ' . $to . '<br>';
-                                        if ($day == '')
-                                            $day = 0;
-                                        $teacherId = mysqli_fetch_assoc($selectedTeacher)["id"];
-                                        $result = insertTeacherConstraints($conn, $teacherId, $day, $from, $to);
+                                if ($day != '' || $from!='' || $to!=''){
+                                    if ($from != '')
+                                        if (DateTime::createFromFormat('H:i', $from) === false)
+                                            $ok = 0;
+                                    if ($to != '')
+                                        if (DateTime::createFromFormat('H:i', $to) === false)
+                                            $ok = 0;
+                                    if ($to == '')
+                                        $to = "23:59";
+                                    if ($from == '')
+                                        $from = "00:00";
+                                    if ((($day != '' && in_array($day, $days)) || $day == '') &&
+                                        $teacher != '' && $ok == 1 && (!(isset($line[4])))) {
+                                        $selectedTeacher = selectTeacherByName($conn, $teacher);
+                                        if (isset($selectedTeacher) && !empty($selectedTeacher)) {
+                                            $name = $day . ' od ' . $from . ' do ' . $to . '<br>';
+                                            if ($day == '')
+                                                $day = 0;
+                                            $teacherId = mysqli_fetch_assoc($selectedTeacher)["id"];
+                                            $result = insertTeacherConstraints($conn, $teacherId, $day, $from, $to);
+                                        }
                                     }
                                 }
                             }

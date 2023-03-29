@@ -6,47 +6,47 @@ include "databaseQueries/databaseQueries.php";
         $days=["pondelok","utorok","streda","štvrtok","piatok"];
         //odbor
         if ($_GET["type"]==0)
-            echo ' <h3>Vložiť manuálne:</h3>
+            echo ' <h3 class="purple">Vložiť manuálne:</h3>
                     <form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "0">
                     <div class="form-group">                 
                         <label for="name">Názov odboru:</label>
-                        <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte názov odboru" required>
+                        <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte názov odboru" maxlength="64" required>
                         <label for="name">Skratka odboru:</label>
-                        <input type="text" class="form-control" name= "shortcut" id="shortcut" placeholder="Zadajte skratku odboru" required>
+                        <input type="text" class="form-control" name= "shortcut" id="shortcut" placeholder="Zadajte skratku odboru" maxlength="8" required>
                     </div>
                         <button type="submit" class="btn btn-primary">Vložiť odbor</button>
                 </form>              
                 ';
         //učiteľ
         else if ($_GET["type"]==1)
-            echo '<form class="form addForm">                   
+            echo '<h3 class="purple">Vložiť manuálne:</h3><form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "1">
                     <div class="form-group">
                         <label for="name">Meno učiteľa:</label>
-                        <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte meno učiteľa" required>
+                        <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte meno učiteľa" maxlength="64" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Vložiť učiteľa</button>
                 </form>';
         //miestnosť
         else if ($_GET["type"]==2)
-            echo '<form class="form addForm">                   
+            echo '<h3 class="purple">Vložiť manuálne:</h3><form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "2">
                     <div class="form-group">
                         <label for="name">Názov miestnosti:</label>
-                        <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte názov miestnosti" required>
+                        <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte názov miestnosti" maxlength="32" required>
                         </div>
                     <button type="submit" class="btn btn-primary">Vložiť miestnosť</button>
                 </form>';
         //predmet
         else if ($_GET["type"]==3){
-            echo '<form class="form addForm">                   
+            echo '<h3 class="purple">Vložiť manuálne:</h3><form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "3">
                     <div class="form-group">
                         <label for="name">Meno predmetu:</label>
-                        <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte meno predmetu" required>
+                        <input type="text" class="form-control" name= "name" id="name" placeholder="Zadajte meno predmetu" maxlength="64" required>
                         <label for="name">Skratka predmetu:</label>
-                        <input type="text" class="form-control" name= "shortcut" id="shortcut" placeholder="Zadajte skratku predmetu" required>
+                        <input type="text" class="form-control" name= "shortcut" id="shortcut" placeholder="Zadajte skratku predmetu" maxlength="8" required>
                         <label for="grade">Stupeň štúdia:</label>
                         <select class="form-control subjectFieldOfStudy" name= "grade" id="grade" required>
                             <option value="bc." >Bakalársky</option>
@@ -81,7 +81,7 @@ include "databaseQueries/databaseQueries.php";
         }
         //obmedzenie
         else if ($_GET["type"]==4){
-            echo '<form class="form addForm">                   
+            echo '<h3 class="purple">Vložiť manuálne:</h3><form class="form addForm">                   
                     <input type="hidden" id="type" name="type" value = "4">
                     <div class="form-group"> <label for="id">Meno učiteľa:</label>
                     <select class="form-control" name= "id" id="id" required>
@@ -110,7 +110,7 @@ include "databaseQueries/databaseQueries.php";
             echo "<h1>Nesprávne navštívenie stránky</h1>";
         $types=array (0,1,2,4);
         if (in_array ($_GET["type"],$types))
-            echo '<h3 class="csvImporth">Vložiť z .csv súboru:</h3>
+            echo '<h3 class="csvImporth purple">Vložiť z .csv súboru:</h3>
                 <form class="form addFormCSV" method="post" enctype="multipart/form-data">
                 <input type="hidden" id="type" name="type" value = "'.$_GET["type"].'">
                 <div class="form-group">

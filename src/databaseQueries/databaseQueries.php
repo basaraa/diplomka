@@ -68,17 +68,17 @@ function selectAllFieldsOfStudy ($conn){
     return $result;
 }
 function selectAllTeachers ($conn){
-    $teachers = "SELECT id,name FROM Teachers";
+    $teachers = "SELECT id,name FROM Teachers ORDER BY name ASC";
     $result = $conn->query($teachers) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
 function selectAllRooms ($conn){
-    $rooms = "SELECT id,name FROM Rooms";
+    $rooms = "SELECT id,name FROM Rooms ORDER BY name ASC";
     $result = $conn->query($rooms) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
 function selectAllSubjects ($conn){
-    $subjects = "SELECT id,name FROM Subjects";
+    $subjects = "SELECT id,name FROM Subjects ORDER BY name ASC";
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
@@ -88,7 +88,8 @@ function selectSubjectByStudyGradeYearSemestre ($conn,$study,$grade,$year,$semes
                 Subjects.exercise_day,Subjects.exercise_time_from,Subjects.exercise_time_to
                 FROM Subjects JOIN SubjectFieldOfStudies ON Subjects.id=SubjectFieldOfStudies.subject_id 
                 JOIN fieldsOfStudy ON SubjectFieldOfStudies.fieldOfStudy_id=fieldsOfStudy.id
-                where fieldsOfStudy.id='".$study."' and Subjects.grade='".$grade ."' and Subjects.year='".$year."' and Subjects.semestre='".$semestre."'";
+                where fieldsOfStudy.id='".$study."' and Subjects.grade='".$grade ."' and Subjects.year='".$year."' and Subjects.semestre='".$semestre."'
+                ORDER BY Subjects.name ASC";
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }

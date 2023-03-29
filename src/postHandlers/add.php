@@ -34,7 +34,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     else http_response_code(400);
                 }
                 else
-                    echo json_encode(["scs" => false,"msg" => '<h2 class="red">Účiteľ s menom: '.$name.' už existuje</h2>']);
+                    echo json_encode(["scs" => false,"msg" => '<h2 class="red">Učiteľ s menom: '.$name.' už existuje</h2>']);
             }
             else http_response_code(400);
         }
@@ -90,15 +90,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 $day=$_POST["Day"];
                 $from=$_POST["From"];
                 $to=$_POST["To"];
-                if ($to=='')
-                    $to="23:59";
-                if ($from=='')
-                    $to="00:00";
-                $result = insertTeacherConstraints($conn,$teacherId,$day,$from,$to);
-                if($result){
-                    echo 1;
+                if ($day!=0 || $from!='' || $to!='') {
+                    if ($to=='')
+                        $to="23:59";
+                    if ($from=='')
+                        $from="00:00";
+                    $result = insertTeacherConstraints($conn,$teacherId,$day,$from,$to);
+                    if($result){
+                        if ($day == 0)
+                            $day='';
+                        echo json_encode(["scs" => true,"msg" => '<h2 class="blue">Úspešne pridané obmedzenie: '.$day.' od '.$from.' do '.$to.'</h2>']);
+                    }
+                    else http_response_code(400);
                 }
-                else http_response_code(400);
+                else echo json_encode(["scs" => false,"msg" => '<h2 class="red">Nezadali ste ani jeden z parametrov pre termín obmedzenia</h2>']);
             }
             else http_response_code(400);
         }
