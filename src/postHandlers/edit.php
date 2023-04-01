@@ -28,6 +28,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $TeacherCustomErrorMessage='';
         $TeacherCustomErrorConstraints=[];
         $x =0;
+        if (strtotime($lectureFrom)>strtotime($lectureTo)){
+            $x=$lectureFrom;
+            $lectureFrom=$lectureTo;
+            $lectureTo=$x;
+        }
+        if (strtotime($exerciseFrom)>strtotime($exerciseTo)){
+            $x=$exerciseFrom;
+            $exerciseFrom=$exerciseTo;
+            $exerciseTo=$x;
+        }
         //fieldOfStudy semestre contraint check
         $subjectFieldOfStudies = selectFieldOfStudyBySubjectId($conn,$id);
         if ($subjectFieldOfStudies){

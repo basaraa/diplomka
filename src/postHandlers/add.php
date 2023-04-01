@@ -95,6 +95,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         $to="23:59";
                     if ($from=='')
                         $from="00:00";
+                    if (strtotime($from)>strtotime($to)){
+                        $x=$from;
+                        $from=$to;
+                        $to=$x;
+                    }
+
                     $result = insertTeacherConstraints($conn,$teacherId,$day,$from,$to);
                     if($result){
                         if ($day == 0)

@@ -69,10 +69,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                         $to = "23:59";
                                     if ($from == '')
                                         $from = "00:00";
+                                    if (strtotime($from)>strtotime($to)){
+                                        $x=$from;
+                                        $from=$to;
+                                        $to=$x;
+                                    }
                                     if ((($day != '' && in_array($day, $days)) || $day == '') &&
                                         $teacher != '' && $ok == 1 && (!(isset($line[4])))) {
                                         $selectedTeacher = selectTeacherByName($conn, $teacher);
-                                        if (isset($selectedTeacher) && !empty($selectedTeacher)) {
+                                        if (isset($selectedTeacher) && !empty($selectedTeacher) && ($selectedTeacher->num_rows)>0) {
                                             $name = $day . ' od ' . $from . ' do ' . $to . '<br>';
                                             if ($day == '')
                                                 $day = 0;
