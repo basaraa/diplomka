@@ -16,6 +16,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $lectureTo=$_POST["lectureTo"].":"."50";
         $exerciseFrom=$_POST["exerciseFrom"].":"."00";
         $exerciseTo=$_POST["exerciseTo"].":"."50";
+        if (strtotime($lectureFrom)>strtotime($lectureTo)){
+            $lectureFrom=$_POST["lectureTo"].":"."00";
+            $lectureTo=$_POST["lectureFrom"].":"."50";
+        }
+        if (strtotime($exerciseFrom)>strtotime($exerciseTo)){
+            $exerciseFrom=$_POST["exerciseTo"].":"."00";
+            $exerciseTo=$_POST["exerciseFrom"].":"."50";
+        }
         $grade =$_POST["grade"];
         $year = $_POST["year"];
         $semestre = $_POST["semestre"];
@@ -27,17 +35,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $TeacherErrorSubjects=[];
         $TeacherCustomErrorMessage='';
         $TeacherCustomErrorConstraints=[];
-        $x =0;
-        if (strtotime($lectureFrom)>strtotime($lectureTo)){
-            $x=$lectureFrom;
-            $lectureFrom=$lectureTo;
-            $lectureTo=$x;
-        }
-        if (strtotime($exerciseFrom)>strtotime($exerciseTo)){
-            $x=$exerciseFrom;
-            $exerciseFrom=$exerciseTo;
-            $exerciseTo=$x;
-        }
         //fieldOfStudy semestre contraint check
         $subjectFieldOfStudies = selectFieldOfStudyBySubjectId($conn,$id);
         if ($subjectFieldOfStudies){
@@ -58,7 +55,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             foreach ($FOSErrorSubjects as $subjectName)
                 $FOSErrorMessage.='"'.$subjectName.'",';
         }
-        $x=0;
         //room check constraint
         $roomSubjects=checkSubjectLecturesInRoomConstraint($conn,$id,$semestre,$lecture_room_id,$lectureDay,
             $lectureFrom,$lectureTo);
@@ -74,7 +70,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             foreach ($RoomErrorSubjects as $subjectName)
                 $RoomErrorMessage.='"'.$subjectName.'",';
         }
-        $x=0;
         //teacher check collision constraint
         foreach($subjectTeachers as $teacherId){
             $teacherSubjects=checkSubjectLecturesByTeacherConstraint($conn,$id,$semestre,$teacherId,$lectureDay,$exerciseDay,
