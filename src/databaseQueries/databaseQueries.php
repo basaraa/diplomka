@@ -109,7 +109,7 @@ function selectSubjectsByStudyGradeYearSemestreDay ($conn,$study,$grade,$year,$s
                 JOIN Rooms ON Rooms.id=Subjects.exercise_room_id
                 where fieldsOfStudy.id='".$study."' and Subjects.grade='".$grade ."' and Subjects.year='".$year."' 
                 and Subjects.semestre='".$semestre."' and exercise_day ='".$day."'
-                ORDER BY 'time_from' ASC";
+                ORDER BY time_from ASC";
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
@@ -127,7 +127,7 @@ function selectSubjectsByTeacherDay ($conn,$teacherId,$semestre,$day){
                 JOIN Teachers ON Teachers.id=SubjectTeachers.teacher_id
                 JOIN Rooms ON Rooms.id=Subjects.exercise_room_id
                 where Teachers.id='".$teacherId."' and Subjects.semestre='".$semestre."' and exercise_day ='".$day."'
-                ORDER BY 'time_from' ASC";
+                ORDER BY time_from ASC";
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
@@ -141,7 +141,7 @@ function selectSubjectsByRoomDay ($conn,$roomId,$semestre,$day){
                 Subjects.exercise_day as 'day',HOUR(Subjects.exercise_time_from) as 'time_from',HOUR(Subjects.exercise_time_to) as 'time_to'           
                 FROM Subjects JOIN Rooms ON Rooms.id=Subjects.exercise_room_id
                 where Rooms.id='".$roomId."' and Subjects.semestre='".$semestre."' and exercise_day ='".$day."'
-                ORDER BY 'time_from' ASC";
+                ORDER BY time_from ASC";
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }

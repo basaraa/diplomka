@@ -112,7 +112,9 @@ $(function () {
                     }
                 }
                 catch{
-                    alert (data)
+                    document.getElementById("modal_background3").style.display="block";
+                    document.getElementsByClassName("modal_div3")[0].style.display="flex";
+                    document.getElementById("modal_text3").innerHTML=data;
                 }
             },
             error: function (){
@@ -167,7 +169,7 @@ $(function () {
       year.empty();
       year.append($("<option></option>").attr("value",1).text("1. ročník"));
       year.append($("<option></option>").attr("value",2).text("2. ročník"));
-      if (index===0)
+      if (index===0 || index===2)
           year.append($("<option></option>").attr("value",3).text("3. ročník"));
   })
 });
