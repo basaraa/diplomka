@@ -55,6 +55,10 @@ function deleteSubjectTeachers($conn,$id,$subjectTeachers){
     $sql= "DELETE FROM SubjectTeachers where subject_id='".$id."' and teacher_id not in (".implode(',', $subjectTeachers).")" ;
     $result = $conn->query($sql) or die("Chyba pri vykonaní query: " . $conn->error);
 }
+function deleteSubjectTeachersBySubject($conn,$id){
+    $sql= "DELETE FROM SubjectTeachers where subject_id='".$id."'" ;
+    $result = $conn->query($sql) or die("Chyba pri vykonaní query: " . $conn->error);
+}
 function deleteSubjectTeachersByFieldOfStudies($conn,$id){
     $sql= "DELETE SubjectTeachers FROM SubjectTeachers JOIN Subjects ON Subjects.id=SubjectTeachers.subject_id
            JOIN SubjectFieldOfStudies ON Subjects.id= SubjectFieldOfStudies.subject_id
@@ -387,7 +391,7 @@ function updateSubject ($conn,$id,$lecture_room_id,$exercise_room_id,$lectureDay
 
 function resetSubjects($conn,$id,$type){
     if ($type==0){
-        deleteSubjectTeachers($conn,$id);
+        deleteSubjectTeachersBySubject($conn,$id);
         $sql= "UPDATE Subjects
                 SET lecture_room_id=null,exercise_room_id=null, lecture_day=null,
                 lecture_time_from = null, lecture_time_to = null,

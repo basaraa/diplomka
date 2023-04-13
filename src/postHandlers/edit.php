@@ -12,17 +12,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $subjectTeachers = $_POST["subjectTeachers"];
         $lectureDay=$_POST["lectureDay"];
         $exerciseDay=$_POST["exerciseDay"];
-        $lectureFrom=$_POST["lectureFrom"].":"."00";
-        $lectureTo=$_POST["lectureTo"].":"."50";
-        $exerciseFrom=$_POST["exerciseFrom"].":"."00";
-        $exerciseTo=$_POST["exerciseTo"].":"."50";
+        $lectureFrom=date('H:i', strtotime($_POST["lectureFrom"].":"."00"));
+        $lectureTo=date('H:i', strtotime($_POST["lectureTo"].":"."50"));
+        $exerciseFrom=date('H:i', strtotime($_POST["exerciseFrom"].":"."00"));
+        $exerciseTo=date('H:i', strtotime($_POST["exerciseTo"].":"."50"));
         if (strtotime($lectureFrom)>strtotime($lectureTo)){
-            $lectureFrom=$_POST["lectureTo"].":"."00";
-            $lectureTo=$_POST["lectureFrom"].":"."50";
+            $lectureFrom=date('H:i', strtotime($_POST["lectureTo"].":"."00"));
+            $lectureTo=date('H:i', strtotime($_POST["lectureFrom"].":"."50"));
         }
         if (strtotime($exerciseFrom)>strtotime($exerciseTo)){
-            $exerciseFrom=$_POST["exerciseTo"].":"."00";
-            $exerciseTo=$_POST["exerciseFrom"].":"."50";
+            $exerciseFrom=date('H:i', strtotime($_POST["exerciseTo"].":"."00"));
+            $exerciseTo=date('H:i', strtotime($_POST["exerciseFrom"].":"."50"));
         }
         if (($lectureDay!=$exerciseDay) || ($lectureFrom<$exerciseFrom && $lectureTo<$exerciseFrom)
             || ($lectureFrom>$lectureTo && $lectureTo>$exerciseTo)){

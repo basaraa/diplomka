@@ -26,7 +26,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     array_push($subjectTeachers,$teacher["id"]);
 
 
-            echo '<h1>'.$name.'</h1>
+            echo '<h1 class="purple">'.$name.'</h1>
                                     
                     <input type="hidden" id="subjectId" name="subjectId" value = "'.$subjectId.'">
                     <input type="hidden" id="grade" name="grade" value = "'.$grade.'">
@@ -117,7 +117,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             echo '</select><label for="exerciseFrom">Čas cvičenia:</label><br> <label class="control-label">od ';
             if ($exerciseFrom){
                 $exerciseFrom=trim($exerciseFrom,":");
-                echo '<input type="number" class="form-inline numberPlace" name= "exerciseFrom" id="exerciseFrom" value = "'.$exerciseTo[0].$exerciseFrom[1].'" min="5" max="23" required>:00';
+                echo '<input type="number" class="form-inline numberPlace" name= "exerciseFrom" id="exerciseFrom" value = "'.$exerciseFrom[0].$exerciseFrom[1].'" min="5" max="23" required>:00';
             }
 
             else
