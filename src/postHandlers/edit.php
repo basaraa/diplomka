@@ -59,9 +59,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             //room check constraint
             $roomSubjects=checkSubjectLecturesInRoomConstraint($conn,$id,$semestre,$lecture_room_id,$lectureDay,
-                $lectureFrom,$lectureTo);
-            $roomSubjectsE=checkSubjectExercisesInRoomConstraint($conn,$id,$semestre,$exercise_room_id,$exerciseDay,
-                $exerciseFrom,$exerciseTo);
+                $lectureFrom,$lectureTo,$exercise_room_id,$exerciseDay,$exerciseFrom,$exerciseTo);
+            $roomSubjectsE=checkSubjectExercisesInRoomConstraint($conn,$id,$semestre,$lecture_room_id,$lectureDay,
+                $lectureFrom,$lectureTo,$exercise_room_id,$exerciseDay,$exerciseFrom,$exerciseTo);
             if (($roomSubjects && ($roomSubjects->num_rows)>0) || ($roomSubjectsE && ($roomSubjectsE->num_rows)>0)){
                 while ($subj=mysqli_fetch_assoc($roomSubjects))
                     if(!in_array(($subj["room_name"].':'.$subj["name"]),$RoomErrorSubjects))

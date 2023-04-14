@@ -270,32 +270,50 @@ function checkSubjectExercisesInFieldOfStudyConstraint($conn,$subjectId,$fieldOf
 }
 //podľa prednášok v miestnosti
 function checkSubjectLecturesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$lectureDay,
-                                                      $fromLecture,$toLecture)
+                                                      $fromLecture,$toLecture, $roomExerciseId, $exerciseDay,$fromExercise,$toExercise)
 {
     $subjects = "SELECT distinct Subjects.id, Subjects.name, Rooms.name as 'room_name' FROM Subjects    
                  JOIN Rooms ON Rooms.id = lecture_room_id 
-                 where Subjects.id !='".$subjectId."' and semestre = '".$semestre."' and lecture_room_id='".$roomId."'
-                 and lecture_day = '".$lectureDay."' 
-                         and ('".$fromLecture."' between lecture_time_from and lecture_time_to
-                             or '".$toLecture."' between lecture_time_from and lecture_time_to
-                             or '".$fromLecture."' <= lecture_time_from and '".$toLecture."' >= lecture_time_to
-                        )                                                
+                 where Subjects.id !='".$subjectId."' and semestre = '".$semestre."' 
+                 and (
+                    (lecture_room_id='".$roomId."' and lecture_day = '".$lectureDay."' 
+                        and ('".$fromLecture."' between lecture_time_from and lecture_time_to
+                            or '".$toLecture."' between lecture_time_from and lecture_time_to
+                            or '".$fromLecture."' <= lecture_time_from and '".$toLecture."' >= lecture_time_to
+                        )
+                    )
+                    or (lecture_room_id='".$roomExerciseId."' and lecture_day = '" . $exerciseDay . "'
+                        and ('".$fromExercise."' between lecture_time_from and lecture_time_to
+                            or '" .$toExercise."' between lecture_time_from and lecture_time_to
+                            or '" .$fromExercise."' <= lecture_time_from AND '".$toExercise."' >= lecture_time_to
+                        )
+                    )
+                 )                                                
                  " ;
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
 }
 //podľa cvičení v miestnosti
-function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$exerciseDay
-                                                       ,$fromExercise,$toExercise)
+function checkSubjectExercisesInRoomConstraint($conn,$subjectId,$semestre,$roomId,$lectureDay,$fromLecture,$toLecture,
+                                               $roomExerciseId, $exerciseDay,$fromExercise,$toExercise)
 {
     $subjects = "SELECT distinct Subjects.id, Subjects.name,Rooms.name as 'room_name' FROM Subjects
                  JOIN Rooms ON Rooms.id = exercise_room_id
-                 where Subjects.id !='".$subjectId."' and semestre = '".$semestre."' and exercise_room_id='".$roomId."'
-                 and exercise_day = '" . $exerciseDay . "'
+                 where Subjects.id !='".$subjectId."' and semestre = '".$semestre."'
+                 and (
+                    (exercise_room_id='".$roomId."' and exercise_day = '".$lectureDay."' 
+                        and ('".$fromLecture."' between exercise_time_from and exercise_time_to
+                            or '".$toLecture."' between exercise_time_from and exercise_time_to
+                            or '".$fromLecture."' <= exercise_time_from and '".$toLecture."' >= exercise_time_to
+                        )
+                    )
+                    or (exercise_room_id='".$roomExerciseId."' and exercise_day = '" . $exerciseDay . "'
                         and ('".$fromExercise."' between exercise_time_from and exercise_time_to
-                             or '" .$toExercise."' between exercise_time_from and exercise_time_to
-                             or '" .$fromExercise."' <= exercise_time_from AND '".$toExercise."' >= exercise_time_to
-                        )                                   
+                            or '" .$toExercise."' between exercise_time_from and exercise_time_to
+                            or '" .$fromExercise."' <= exercise_time_from AND '".$toExercise."' >= exercise_time_to
+                        )
+                    )
+                 )                                   
                  " ;
     $result = $conn->query($subjects) or die("Chyba pri vykonaní query: " . $conn->error);
     return $result;
