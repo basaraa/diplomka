@@ -3,8 +3,9 @@ include "partials/header.php";
 require_once("config/config.php");
 include "databaseQueries/databaseQueries.php";
 
-echo '<form class="constraintListGet"><div class="form-group">
+echo '<form class="constraintListGet form"><div class="form-group">
 <input type="hidden" id="list" name="list" value="1">
+<label for="id">Meno učiteľa:</label>
 <select class="form-control" name= "id" id="id" required>';
 $selected=selectAllTeachers($conn);
 if ($selected){
